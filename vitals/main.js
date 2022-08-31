@@ -11,13 +11,19 @@ const fs = require('fs');
 const fp = require('fs').promises
 const { getSettingValue, settingsChangeEmitter, SettingsItem, setSettingValue } = require("./settings");
 
+let canLoad = true
+
 // this package checks if we are in install mode and executes the install scripts
-if (require('./squirrel'))
+if (require('./squirrel')) {
+    canLoad = false
     app.quit()
+}
 
 // make sure we are the only instance running, otherwise quit
-if (!app.requestSingleInstanceLock())
+if (!app.requestSingleInstanceLock()) {
+    canLoad = false
     app.quit()
+}
 
 const dirSize = (directory) => {
     const files = fs.readdirSync(directory);
@@ -224,8 +230,10 @@ const onReady = () => {
     createWindow()
 }
 
-app.whenReady().then(() => onReady());
+if (canLoad) {
+    app.whenReady().then(() => onReady());
 
-app.on('window-all-closed', (ev) => {
-    // leaving this empty prevents the default action
-})
+    app.on('window-all-closed', (ev) => {
+        // leaving this empty prevents the default action
+    })
+}
