@@ -11,8 +11,13 @@ const fs = require('fs');
 const fp = require('fs').promises
 const { getSettingValue, settingsChangeEmitter, SettingsItem, setSettingValue } = require("./settings");
 
+// this package checks if we are in install mode and executes the install scripts
 if (require('./squirrel'))
-    app.quit();
+    app.quit()
+
+// make sure we are the only instance running, otherwise quit
+if (!app.requestSingleInstanceLock())
+    app.quit()
 
 const dirSize = (directory) => {
     const files = fs.readdirSync(directory);
