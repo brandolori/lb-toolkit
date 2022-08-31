@@ -1,5 +1,5 @@
 {
-  "name": "lbtoolkit",
+  "name": "lb-toolkit",
   "version": "0.1.0",
   "private": true,
   "homepage": "./",
@@ -11,10 +11,11 @@
   },
   "scripts": {
     "electron": "electron .",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "package": "npx electron-packager . --overwrite",
-    "rebuild": "npm rebuild --runtime=electron --target=19.0.0-alpha.1 --dist-url=https://electronjs.org/headers --abi=93"
+    "react-start": "react-scripts start",
+    "react-build": "react-scripts build",
+    "elect-package": "npx electron-packager . --overwrite",
+    "elect-publish": "node ./vitals/generate-installer.mjs",
+    "elect-rebuild": "npm rebuild --runtime=electron --target=19.0.0-alpha.1 --dist-url=https://electronjs.org/headers --abi=93"
   },
   "eslintConfig": {
     "extends": [
@@ -43,6 +44,7 @@
     "@types/react-dom": "^18.0.6",
     "electron": "19.0.14",
     "electron-packager": "^15.5.2",
+    "electron-winstaller": "^5.0.0",
     "node-abi": "^3.24.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

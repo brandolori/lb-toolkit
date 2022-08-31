@@ -17,7 +17,7 @@
 .env.development.local
 .env.test.local
 .env.production.local
-/lbtoolkit-win32-x64
+/lb-toolkit-win32-x64
 /installer
 
 npm-debug.log*

@@ -9,8 +9,10 @@ const { join, resolve } = require('path');
 const robot = require("robotjs");
 const fs = require('fs');
 const fp = require('fs').promises
-const { getSettingValue, settingsChangeEmitter, SettingsItem, setSettingValue } = require("./settings")
+const { getSettingValue, settingsChangeEmitter, SettingsItem, setSettingValue } = require("./settings");
 
+if (require('./squirrel'))
+    app.quit();
 
 const dirSize = (directory) => {
     const files = fs.readdirSync(directory);
@@ -127,7 +129,7 @@ const createWindow = () => {
 
 const onReady = () => {
 
-    mainIcon = new Tray(join(__dirname, "../assets/stop.ico"))
+    mainIcon = new Tray(join(__dirname, "../assets/favicon.ico"))
     mainIcon.addListener("click", () => {
         if (mainWindow === null) {
             createWindow()
