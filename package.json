@@ -36,6 +36,7 @@
     "electron": "19.0.14",
     "electron-packager": "^15.5.2",
     "electron-rebuild": "^3.2.9",
+    "electron-winstaller": "^5.0.0",
     "node-abi": "^3.24.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

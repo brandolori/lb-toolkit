@@ -1,6 +1,6 @@
 "use strict"
 
-const { app, BrowserWindow, Tray, ipcMain, nativeTheme, clipboard, globalShortcut } = require('electron');
+const { app, BrowserWindow, Tray, ipcMain, nativeTheme, clipboard, globalShortcut, Menu } = require('electron');
 // Module to create native browser window.
 
 const ChildProcess = require("child_process")
@@ -9,6 +9,7 @@ const { join, resolve } = require('path');
 const robot = require("robotjs");
 const fs = require('fs');
 const fp = require('fs').promises
+const { getSettingValue, settingsChangeEmitter, SettingsItem, setSettingValue } = require("./settings")
 
 
 const dirSize = (directory) => {
@@ -24,10 +25,19 @@ const dirSize = (directory) => {
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow;
-let next;
-let prev;
-let playPause;
+let mainWindow
+
+/** @type Tray */
+let next
+
+/** @type Tray */
+let prev
+
+/** @type Tray */
+let playPause
+
+/** @type Tray */
+let mainIcon
 
 const publicFolder = app.isPackaged
     ? "../build"
@@ -49,8 +59,7 @@ const handleCommand = (command, args) => new Promise((res, rej) => {
 
 })
 
-function createWindow() {
-
+const createTrays = () => {
     next = new Tray(join(__dirname, "../assets/next.ico"))
     next.addListener("click", () => {
         robot.keyTap("audio_next")
@@ -65,49 +74,28 @@ function createWindow() {
     playPause.addListener("click", () => {
         robot.keyTap("audio_play")
     })
+}
 
-    globalShortcut.register('Super+Shift+C', () => {
+const destroyTrays = () => {
+    next.destroy()
+    prev.destroy()
+    playPause.destroy()
+}
+
+const keyCombo = 'super+control+b'
+
+const registerColorPicker = () => {
+    globalShortcut.register(keyCombo, () => {
         const { x, y } = robot.getMousePos()
         clipboard.writeText(robot.getPixelColor(x, y))
     })
+}
 
-    ipcMain.handle('cmd:fetchUpdates', async () => {
+const unregisterColorPicker = () => {
+    globalShortcut.unregister(keyCombo)
+}
 
-        const stdout = await handleCommand("winget", ["upgrade"])
-        return stdout.substring(stdout.indexOf("Nome"))
-
-    })
-
-    ipcMain.handle('cmd:updatePackage', async (ev, packageName) => {
-        console.log("updating", packageName)
-        const stdout = await handleCommand("winget", ["upgrade", packageName])
-        console.log("updated", packageName)
-        return stdout
-
-    })
-
-    ipcMain.handle('fs:calculateFolderSize', async (ev, path) => {
-        try {
-            return dirSize(path) / 1_000_000
-        } catch (e) {
-            console.log(e)
-            return 0
-        }
-    })
-
-    ipcMain.handle('fs:getEnvironmentVariable', async (ev, variable) => {
-        return process.env[variable];
-    })
-
-    ipcMain.handle('fs:deleteFolder', async (ev, folderPath) => {
-        const content = await fp.readdir(folderPath)
-        const promises = content.map(async file => {
-            await fp.rm(path.join(folderPath, file), { recursive: true })
-        })
-        await Promise.all(promises)
-    })
-
-
+const createWindow = () => {
     // Create the browser window.
     mainWindow = new BrowserWindow({
         width: 800, height: 600,
@@ -137,27 +125,100 @@ function createWindow() {
     })
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.whenReady().then(() => createWindow());
+const onReady = () => {
 
-// Quit when all windows are closed.
-app.on('window-all-closed', function () {
-    // On OS X it is common for applications and their menu bar
-    // to stay active until the user quits explicitly with Cmd + Q
-    if (process.platform !== 'darwin') {
-        app.quit()
-    }
-});
+    mainIcon = new Tray(join(__dirname, "../assets/stop.ico"))
+    mainIcon.addListener("click", () => {
+        if (mainWindow === null) {
+            createWindow()
+        }
+    })
 
-app.on('activate', function () {
-    // On OS X it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    if (mainWindow === null) {
-        createWindow()
-    }
-});
+    mainIcon.setContextMenu(Menu.buildFromTemplate([
+        {
+            label: 'Show',
+            click: () => {
+                createWindow()
+            }
+        },
+        {
+            label: 'Quit',
+            click: () => {
+                app.quit() // actually quit the app.
+            }
+        },
+    ]))
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+    // enable media tray icons, then register on setting change
+    if (getSettingValue(SettingsItem.enableMediaControls))
+        createTrays()
+
+    settingsChangeEmitter.on(SettingsItem.enableMediaControls, (value) => {
+        if (value)
+            createTrays()
+        else
+            destroyTrays()
+    })
+
+    // enable color picker, then register on setting change
+    if (getSettingValue(SettingsItem.enableColorPicker))
+        registerColorPicker()
+
+    settingsChangeEmitter.on(SettingsItem.enableColorPicker, (value) => {
+        if (value)
+            registerColorPicker()
+        else
+            unregisterColorPicker()
+    })
+
+
+    ipcMain.handle('cmd:fetchUpdates', async () => {
+
+        const stdout = await handleCommand("winget", ["upgrade"])
+        return stdout.substring(stdout.indexOf("Nome"))
+
+    })
+
+    ipcMain.handle('cmd:updatePackage', async (ev, packageName) => {
+        const stdout = await handleCommand("winget", ["upgrade", packageName])
+        return stdout
+
+    })
+
+    ipcMain.handle('fs:calculateFolderSize', async (ev, path) => {
+        try {
+            return dirSize(path) / 1_000_000
+        } catch (e) {
+            console.log(e)
+            return 0
+        }
+    })
+
+    ipcMain.handle('fs:getEnvironmentVariable', async (ev, variable) => {
+        return process.env[variable];
+    })
+
+    ipcMain.handle('settings:getSettingValue', (ev, setting) => {
+        return getSettingValue(setting)
+    })
+
+    ipcMain.handle('settings:setSettingValue', (ev, setting, value) => {
+        return setSettingValue(setting, value)
+    })
+
+    ipcMain.handle('fs:deleteFolder', async (ev, folderPath) => {
+        const content = await fp.readdir(folderPath)
+        const promises = content.map(async file => {
+            await fp.rm(path.join(folderPath, file), { recursive: true })
+        })
+        await Promise.all(promises)
+    })
+
+    createWindow()
+}
+
+app.whenReady().then(() => onReady());
+
+app.on('window-all-closed', (ev) => {
+    // leaving this empty prevents the default action
+})

@@ -5,6 +5,7 @@ import Navigation, { Route } from './Navigation';
 import Updater from './Updater';
 import "./App.css"
 import Cleaner from './Cleaner';
+import Main from './Main';
 
 const App = () => {
   const [route, setRoute] = useState<Route>("home")
@@ -14,7 +15,7 @@ const App = () => {
     navbar={<Navigation route={route} onChangeRoute={(route) => setRoute(route)} />}
   >
     {route == "home" &&
-      <Text>Home!</Text>}
+      <Main />}
     {route == "updater" &&
       <Updater />}
     {route == "cleaner" &&
