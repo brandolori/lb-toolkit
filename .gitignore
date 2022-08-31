@@ -17,7 +17,8 @@
 .env.development.local
 .env.test.local
 .env.production.local
-/sound-board-win32-x64
+/lbtoolkit-win32-x64
+/installer
 
 npm-debug.log*
 yarn-debug.log*

@@ -1,14 +1,19 @@
 {
-  "name": "sound-board",
+  "name": "lbtoolkit",
   "version": "0.1.0",
   "private": true,
   "homepage": "./",
   "main": "vitals/main.js",
+  "description": "Utils for personal use",
+  "author": {
+    "email": "lori.barto@live.it",
+    "name": "Lorenzo Bartolini"
+  },
   "scripts": {
     "electron": "electron .",
     "start": "react-scripts start",
-    "package": "npx electron-packager . --overwrite",
     "build": "react-scripts build",
+    "package": "npx electron-packager . --overwrite",
     "rebuild": "npm rebuild --runtime=electron --target=19.0.0-alpha.1 --dist-url=https://electronjs.org/headers --abi=93"
   },
   "eslintConfig": {
@@ -26,6 +31,9 @@
     ]
   },
   "devDependencies": {
+    "@emotion/react": "^11.10.4",
+    "@mantine/core": "^5.2.4",
+    "@mantine/hooks": "^5.2.4",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
@@ -35,18 +43,13 @@
     "@types/react-dom": "^18.0.6",
     "electron": "19.0.14",
     "electron-packager": "^15.5.2",
-    "electron-rebuild": "^3.2.9",
-    "electron-winstaller": "^5.0.0",
     "node-abi": "^3.24.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^4.4.0",
     "react-scripts": "5.0.1",
     "typescript": "^4.7.4",
-    "web-vitals": "^2.1.4",
-    "@emotion/react": "^11.10.4",
-    "@mantine/core": "^5.2.4",
-    "@mantine/hooks": "^5.2.4",
-    "react-icons": "^4.4.0"
+    "web-vitals": "^2.1.4"
   },
   "dependencies": {
     "robotjs": "^0.6.0"
