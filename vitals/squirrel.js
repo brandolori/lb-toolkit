@@ -1,11 +1,9 @@
 var path = require('path');
 var spawn = require('child_process').spawn;
-var debug = require('debug')('electron-squirrel-startup');
 var app = require('electron').app;
 
 var run = function (args, done) {
     var updateExe = path.resolve(path.dirname(process.execPath), '..', 'Update.exe');
-    debug('Spawning `%s` with args `%s`', updateExe, args);
     spawn(updateExe, args, {
         detached: true
     }).on('close', done);
@@ -14,7 +12,6 @@ var run = function (args, done) {
 var check = function () {
     if (process.platform === 'win32') {
         var cmd = process.argv[1];
-        debug('processing squirrel command `%s`', cmd);
         var target = path.basename(process.execPath);
 
         if (cmd === '--squirrel-install' || cmd === '--squirrel-updated') {

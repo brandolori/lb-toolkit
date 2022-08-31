@@ -13,7 +13,7 @@
     "electron": "electron .",
     "react-start": "react-scripts start",
     "react-build": "react-scripts build",
-    "elect-package": "npx electron-packager . --overwrite",
+    "elect-package": "npx electron-packager . --overwrite --ignore=\\installer --ignore=\\public",
     "elect-publish": "node ./vitals/generate-installer.mjs",
     "elect-rebuild": "npm rebuild --runtime=electron --target=19.0.0-alpha.1 --dist-url=https://electronjs.org/headers --abi=93"
   },
@@ -25,10 +25,10 @@
   },
   "browserslist": {
     "production": [
-      "last 1 electron version"
+      "last 2 electron version"
     ],
     "development": [
-      "last 1 electron version"
+      "last 2 electron version"
     ]
   },
   "devDependencies": {
