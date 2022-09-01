@@ -1,6 +1,6 @@
 const ChildProcess = require("child_process")
 const path = require('path');
-const { join, resolve } = require('path');
+const { join } = require('path');
 const robot = require("robotjs");
 const fs = require('fs');
 const fp = require('fs').promises
@@ -91,8 +91,10 @@ const unregisterColorPicker = () => {
     globalShortcut.unregister(keyCombo)
 }
 
+const atLoginFlag = "--login"
+
 const registerAtLogin = () => {
-    app.setLoginItemSettings({ openAtLogin: true })
+    app.setLoginItemSettings({ openAtLogin: true, args: [atLoginFlag] })
 }
 
 const unregisterAtLogin = () => {
@@ -236,7 +238,8 @@ const onReady = () => {
         await Promise.all(promises)
     })
 
-    createWindow()
+    if (!process.argv.includes(atLoginFlag))
+        createWindow()
 }
 
 module.exports = onReady

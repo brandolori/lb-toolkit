@@ -1,18 +1,18 @@
-var path = require('path');
-var spawn = require('child_process').spawn;
-var app = require('electron').app;
+const path = require('path');
+const spawn = require('child_process').spawn;
+const app = require('electron').app;
 
-var run = function (args, done) {
-    var updateExe = path.resolve(path.dirname(process.execPath), '..', 'Update.exe');
+const run = (args, done) => {
+    const updateExe = path.resolve(path.dirname(process.execPath), '..', 'Update.exe');
     spawn(updateExe, args, {
         detached: true
     }).on('close', done);
 };
 
-var check = function () {
+const check = () => {
     if (process.platform === 'win32') {
-        var cmd = process.argv[1];
-        var target = path.basename(process.execPath);
+        const cmd = process.argv[1];
+        const target = path.basename(process.execPath);
 
         if (cmd === '--squirrel-install' || cmd === '--squirrel-updated') {
             run(['--createShortcut=' + target + ''], app.quit);
