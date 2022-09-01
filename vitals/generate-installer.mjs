@@ -5,8 +5,7 @@ try {
         appDirectory: 'lb-toolkit-win32-x64',
         outputDirectory: 'installer',
         noMsi: true,
-        title: "LB Toolkit 🔧",
-        setupExe: "LB Toolkit Setup.exe",
+        setupExe: "lb-toolkit setup.exe",
         setupIcon: "assets/favicon.ico",
         iconUrl: "https://www.lorenzobartolini.me/favicon.ico"
     });
