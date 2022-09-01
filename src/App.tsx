@@ -16,7 +16,7 @@ const TitleBar = () =>
         height={titleBarHeight}
         className='header' p="xs">
         <Text style={{ marginTop: "auto", marginBottom: "auto" }} size="xs">
-            🔧 LB Toolkit
+            <img style={{ height: 15, verticalAlign: "text-bottom", marginRight: 5 }} src="favicon.ico" alt="" />LB Toolkit
         </Text>
     </Header>
 
