@@ -29,7 +29,7 @@ const settings: Setting[] = [
 
 const defaultState: SettingState[] = settings.map(el => ({
     key: el.key,
-    value: true
+    value: false
 }))
 
 type SettingState = {

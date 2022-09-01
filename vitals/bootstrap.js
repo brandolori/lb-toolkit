@@ -104,7 +104,10 @@ const unregisterAtLogin = () => {
 const createWindow = () => {
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        width: 800, height: 600,
+        width: 800,
+        height: 600,
+        minHeight: 400,
+        minWidth: 600,
         webPreferences: {
             preload: join(__dirname, 'preload.js'),
             devTools: !app.isPackaged,
