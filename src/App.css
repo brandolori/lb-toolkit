@@ -1,3 +1,8 @@
 body {
-    margin: 0px
+    margin: 0px;
+}
+
+.header {
+    -webkit-app-region: drag;
+    /* height: env(titlebar-area-height); */
 }

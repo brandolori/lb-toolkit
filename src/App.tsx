@@ -7,11 +7,25 @@ import "./App.css"
 import Cleaner from './Cleaner';
 import Main from './Main';
 
+const titleBarHeight = 40
+//window.navigator["windowControlsOverlay"].getTitlebarAreaRect().height
+
+const TitleBar = () =>
+    <Header
+        style={{ display: "flex" }}
+        height={titleBarHeight}
+        className='header' p="xs">
+        <Text style={{ marginTop: "auto", marginBottom: "auto" }} size="xs">
+            🔧 LB Toolkit
+        </Text>
+    </Header>
+
 const App = () => {
     const [route, setRoute] = useState<Route>("home")
 
     return <AppShell
         padding="md"
+        header={<TitleBar />}
         navbar={<Navigation route={route} onChangeRoute={(route) => setRoute(route)} />}
     >
         {route == "home" &&
