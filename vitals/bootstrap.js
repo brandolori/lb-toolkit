@@ -142,10 +142,10 @@ const createWindow = () => {
 }
 
 const showOrRecreateMainWindow = () => {
-    if (mainWindow === null) {
-        createWindow()
-    } else {
+    if (mainWindow) {
         mainWindow.focus()
+    } else {
+        createWindow()
     }
 }
 
