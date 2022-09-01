@@ -91,12 +91,12 @@ const unregisterColorPicker = () => {
     globalShortcut.unregister(keyCombo)
 }
 
-const showOrRecreateMainWindow = () => {
-    if (mainWindow === null) {
-        createWindow()
-    } else {
-        mainWindow.focus()
-    }
+const registerAtLogin = () => {
+    app.setLoginItemSettings({ openAtLogin: true })
+}
+
+const unregisterAtLogin = () => {
+    app.setLoginItemSettings({ openAtLogin: false })
 }
 
 const createWindow = () => {
@@ -127,8 +127,14 @@ const createWindow = () => {
         // when you should delete the corresponding element.
         mainWindow = null
     })
+}
 
-    return mainWindow
+const showOrRecreateMainWindow = () => {
+    if (mainWindow === null) {
+        createWindow()
+    } else {
+        mainWindow.focus()
+    }
 }
 
 const onReady = () => {
@@ -177,6 +183,15 @@ const onReady = () => {
         else
             unregisterColorPicker()
     })
+
+    if (app.isPackaged) {
+        settingsChangeEmitter.on(SettingsItem.enableRunOnStartup, (value) => {
+            if (value)
+                registerAtLogin()
+            else
+                unregisterAtLogin()
+        })
+    }
 
 
     ipcMain.handle('cmd:fetchUpdates', async () => {

@@ -8,20 +8,20 @@ import Cleaner from './Cleaner';
 import Main from './Main';
 
 const App = () => {
-  const [route, setRoute] = useState<Route>("home")
+    const [route, setRoute] = useState<Route>("home")
 
-  return <AppShell
-    padding="md"
-    navbar={<Navigation route={route} onChangeRoute={(route) => setRoute(route)} />}
-  >
-    {route == "home" &&
-      <Main />}
-    {route == "updater" &&
-      <Updater />}
-    {route == "cleaner" &&
-      <Cleaner />}
+    return <AppShell
+        padding="md"
+        navbar={<Navigation route={route} onChangeRoute={(route) => setRoute(route)} />}
+    >
+        {route == "home" &&
+            <Main />}
+        {route == "updater" &&
+            <Updater />}
+        {route == "cleaner" &&
+            <Cleaner />}
 
-  </AppShell>
+    </AppShell>
 }
 
 export default App;
