@@ -7,7 +7,8 @@ try {
         noMsi: true,
         setupExe: "lb-toolkit setup.exe",
         setupIcon: "assets/favicon.ico",
-        iconUrl: "https://www.lorenzobartolini.me/favicon.ico"
+        iconUrl: "https://www.lorenzobartolini.me/favicon.ico",
+        noDelta: true,
     });
     console.log('It worked!');
 } catch (e) {
