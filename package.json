@@ -10,12 +10,13 @@
     "name": "Lorenzo Bartolini"
   },
   "scripts": {
-    "electron": "electron .",
     "react-start": "react-scripts start",
+    "elect-start": "electron .",
     "react-build": "react-scripts build",
     "elect-package": "npx electron-packager . --overwrite --ignore=\\installer --ignore=\\public --icon=assets\\favicon.ico",
     "elect-publish": "node ./vitals/generate-installer.mjs",
-    "elect-rebuild": "npm rebuild --runtime=electron --target=19.0.0-alpha.1 --dist-url=https://electronjs.org/headers --abi=93"
+    "elect-rebuild": "npm rebuild --runtime=electron --target=19.0.0-alpha.1 --dist-url=https://electronjs.org/headers --abi=93",
+    "build": "npm run react-build && npm run elect-package && npm run elect-publish"
   },
   "eslintConfig": {
     "extends": [
@@ -43,7 +44,7 @@
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "electron": "19.0.14",
-    "electron-packager": "^15.5.2",
+    "electron-packager": "^16.0.0",
     "electron-winstaller": "^5.0.0",
     "node-abi": "^3.24.0",
     "react": "^18.2.0",
