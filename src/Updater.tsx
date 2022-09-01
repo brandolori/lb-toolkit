@@ -29,7 +29,6 @@ export default () => {
     }
 
     const upgradePackage = async (packageName: string) => {
-        const indexInList = upgradablePackages.indexOf(packageName)
         setCurrentlyUpgrading((currentlyUpgrading) => currentlyUpgrading.concat([packageName]))
         await window["electronAPI"].updatePackage(packageName)
         setCurrentlyUpgrading((arr) => arr.filter(el => el != packageName))

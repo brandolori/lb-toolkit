@@ -78,7 +78,7 @@ const destroyTrays = () => {
     playPause.destroy()
 }
 
-const keyCombo = 'super+control+b'
+const keyCombo = 'super+control+x'
 
 const registerColorPicker = () => {
     globalShortcut.register(keyCombo, () => {

@@ -6,8 +6,9 @@ import Updater from './Updater';
 import "./App.css"
 import Cleaner from './Cleaner';
 import Main from './Main';
+import Regex from './Regex';
 
-const titleBarHeight = 40
+const titleBarHeight = 41
 //window.navigator["windowControlsOverlay"].getTitlebarAreaRect().height
 
 const TitleBar = () =>
@@ -34,6 +35,8 @@ const App = () => {
             <Updater />}
         {route == "cleaner" &&
             <Cleaner />}
+        {route == "regex" &&
+            <Regex />}
 
     </AppShell>
 }
