@@ -2,27 +2,34 @@ import { Navbar, NavLink } from "@mantine/core";
 
 export type Route = "updater" | "home" | "cleaner" | "regex"
 
+const RouteNav = ({ currentRoute, routeName, onChangeRoute, label }:
+    { currentRoute: Route, routeName: Route, onChangeRoute: (route: Route) => void, label: string }) => <NavLink
+        label={label}
+        active={currentRoute == routeName}
+        onClick={() => onChangeRoute(routeName)}
+    />
+
 export default ({ route, onChangeRoute }:
     { route: Route, onChangeRoute: (route: Route) => void }) =>
     <Navbar width={{ base: 200 }} p="xs">
-        <NavLink
+        <RouteNav
+            currentRoute={route}
             label="🔧 Home"
-            active={route == "home"}
-            onClick={() => onChangeRoute("home")}
-        />
-        <NavLink
+            onChangeRoute={onChangeRoute}
+            routeName="home" />
+        <RouteNav
+            currentRoute={route}
             label="📦 Updater"
-            active={route == "updater"}
-            onClick={() => onChangeRoute("updater")}
-        />
-        <NavLink
+            onChangeRoute={onChangeRoute}
+            routeName="updater" />
+        <RouteNav
+            currentRoute={route}
             label="🧹 Cleaner"
-            active={route == "cleaner"}
-            onClick={() => onChangeRoute("cleaner")}
-        />
-        <NavLink
+            onChangeRoute={onChangeRoute}
+            routeName="cleaner" />
+        <RouteNav
+            currentRoute={route}
             label="⚙️ Regex checker"
-            active={route == "regex"}
-            onClick={() => onChangeRoute("regex")}
-        />
+            onChangeRoute={onChangeRoute}
+            routeName="regex" />
     </Navbar>

@@ -10,7 +10,6 @@ export default () => {
     const [inputString, setInputString] = useState("")
     const [outputString, setOutputString] = useState<OutputData[]>([])
 
-
     useEffect(() => {
         let regExpObject: RegExp
         try {
