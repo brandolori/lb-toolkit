@@ -1,22 +1,10 @@
-const ChildProcess = require("child_process")
 const path = require('path');
 const { join } = require('path');
 const robot = require("robotjs");
-const fs = require('fs');
 const fp = require('fs').promises
 const { getSettingValue, settingsChangeEmitter, SettingsItem, setSettingValue } = require("./settings");
 const { Tray, globalShortcut, clipboard, BrowserWindow, app, Menu, ipcMain, nativeTheme } = require("electron");
-
-const dirSize = (directory) => {
-    const files = fs.readdirSync(directory);
-
-    return files.reduce((accumulator, file) => {
-        const stats = fs.statSync(path.join(directory, file))
-        return stats.isFile()
-            ? accumulator + stats.size
-            : accumulator + dirSize(path.join(directory, file));
-    }, 0);
-}
+const { dirSize, handleCommand } = require('./utils');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -34,26 +22,6 @@ let playPause
 
 /** @type Tray */
 let mainIcon
-
-const publicFolder = app.isPackaged
-    ? "../build"
-    : "../public"
-
-const handleCommand = (command, args) => new Promise((res, rej) => {
-    const proc = ChildProcess.spawn(command, args)
-
-    let buffer = []
-    proc.stdout.on("data", (data) => {
-
-        buffer.push(data)
-    })
-
-    proc.on("close", () => {
-        const finalStdout = buffer.join("")
-        res(finalStdout)
-    })
-
-})
 
 const createTrays = () => {
     next = new Tray(join(__dirname, "../assets/next.ico"))
@@ -104,6 +72,7 @@ const unregisterAtLogin = () => {
 const createWindow = () => {
     // Create the browser window.
     mainWindow = new BrowserWindow({
+        show: false,
         width: 800,
         height: 600,
         minHeight: 400,
@@ -138,6 +107,10 @@ const createWindow = () => {
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
         mainWindow = null
+    })
+
+    mainWindow.once('ready-to-show', () => {
+        mainWindow.show()
     })
 }
 
