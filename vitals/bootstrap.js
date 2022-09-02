@@ -5,7 +5,7 @@ const robot = require("robotjs");
 const fs = require('fs');
 const fp = require('fs').promises
 const { getSettingValue, settingsChangeEmitter, SettingsItem, setSettingValue } = require("./settings");
-const { Tray, globalShortcut, clipboard, BrowserWindow, app, Menu, ipcMain } = require("electron");
+const { Tray, globalShortcut, clipboard, BrowserWindow, app, Menu, ipcMain, nativeTheme } = require("electron");
 
 const dirSize = (directory) => {
     const files = fs.readdirSync(directory);
@@ -108,11 +108,11 @@ const createWindow = () => {
         height: 600,
         minHeight: 400,
         minWidth: 600,
-        backgroundColor: "#1a1b1e",
+        backgroundColor: nativeTheme.shouldUseDarkColors ? "#1a1b1e" : undefined,
         titleBarStyle: "hidden",
         titleBarOverlay: {
-            color: "#1a1b1e",
-            symbolColor: "white",
+            color: nativeTheme.shouldUseDarkColors ? "#1a1b1e" : undefined,
+            symbolColor: nativeTheme.shouldUseDarkColors ? "white" : undefined,
             height: 40
         },
         webPreferences: {
