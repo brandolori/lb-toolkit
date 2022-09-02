@@ -24,6 +24,10 @@ const TitleBar = () =>
 const App = () => {
     const [route, setRoute] = useState<Route>("home")
 
+    useEffect(() => {
+        window["electronAPI"].readyToShow()
+    }, [])
+
     return <AppShell
         padding="md"
         header={<TitleBar />}

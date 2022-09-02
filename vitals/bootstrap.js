@@ -109,7 +109,7 @@ const createWindow = () => {
         mainWindow = null
     })
 
-    mainWindow.once('ready-to-show', () => {
+    ipcMain.on("render:readyToShow", () => {
         mainWindow.show()
     })
 }
