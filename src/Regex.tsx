@@ -65,7 +65,8 @@ export default () => {
         <Card shadow="md" p="xs">
             <pre style={{ margin: 0, height: 100, overflowY: "auto", overflowWrap: "anywhere", whiteSpace: "pre-wrap" }}>
                 {outputString.map((el, i) => el.highlighted
-                    ? <Mark key={i}>{el.text}</Mark>
+                    // gli elementi evidenziati sono sempre dispari
+                    ? <Mark color={Math.round(i / 2) % 2 == 0 ? "orange" : "pink"} key={i}>{el.text}</Mark>
                     : <Text key={i} span>{el.text}</Text>
                 )}
             </pre>
