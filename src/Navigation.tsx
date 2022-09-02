@@ -1,6 +1,6 @@
 import { Navbar, NavLink } from "@mantine/core";
 
-export type Route = "updater" | "home" | "cleaner" | "regex"
+export type Route = "updater" | "home" | "cleaner" | "regex" | "wifi"
 
 type RouteNavProps = {
     currentRoute: Route;
@@ -38,4 +38,9 @@ export default ({ route, onChangeRoute }:
             label="⚙️ Regex checker"
             onChangeRoute={onChangeRoute}
             routeName="regex" />
+        <RouteNav
+            currentRoute={route}
+            label="📶 Wifi password"
+            onChangeRoute={onChangeRoute}
+            routeName="wifi" />
     </Navbar>

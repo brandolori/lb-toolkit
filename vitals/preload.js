@@ -9,5 +9,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
     deleteFolder: (path) => ipcRenderer.invoke("fs:deleteFolder", path),
     getSettingValue: (setting) => ipcRenderer.invoke("settings:getSettingValue", setting),
     setSettingValue: (setting, value) => ipcRenderer.invoke("settings:setSettingValue", setting, value),
-    readyToShow: () => ipcRenderer.send('render:readyToShow')
+    readyToShow: () => ipcRenderer.send('render:readyToShow'),
+    retrieveConnectionDetails: () => ipcRenderer.invoke('wifi:retrieveConnectionDetails')
 })

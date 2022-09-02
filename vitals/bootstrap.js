@@ -5,6 +5,8 @@ const fp = require('fs').promises
 const { getSettingValue, settingsChangeEmitter, SettingsItem, setSettingValue } = require("./settings");
 const { Tray, globalShortcut, clipboard, BrowserWindow, app, Menu, ipcMain, nativeTheme } = require("electron");
 const { dirSize, handleCommand } = require('./utils');
+const getWifiSSID = require('./getWifiSSID');
+const getWifiPassword = require('./getWifiPassword');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -219,6 +221,13 @@ const onReady = () => {
             await fp.rm(path.join(folderPath, file), { recursive: true })
         })
         await Promise.all(promises)
+    })
+
+    ipcMain.handle('wifi:retrieveConnectionDetails', async (ev) => {
+        const ssid = await getWifiSSID()
+        const password = await getWifiPassword(ssid)
+
+        return { ssid, password }
     })
 
     if (!process.argv.includes(atLoginFlag))

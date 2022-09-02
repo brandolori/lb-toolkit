@@ -7,6 +7,7 @@ import "./App.css"
 import Cleaner from './Cleaner';
 import Main from './Main';
 import Regex from './Regex';
+import Wifi from './Wifi';
 
 const titleBarHeight = 41
 //window.navigator["windowControlsOverlay"].getTitlebarAreaRect().height
@@ -41,6 +42,8 @@ const App = () => {
             <Cleaner />}
         {route == "regex" &&
             <Regex />}
+        {route == "wifi" &&
+            <Wifi/>}
 
     </AppShell>
 }

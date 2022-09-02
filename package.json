@@ -55,6 +55,9 @@
     "web-vitals": "^2.1.4"
   },
   "dependencies": {
-    "robotjs": "^0.6.0"
+    "execa": "^6.1.0",
+    "robotjs": "^0.6.0",
+    "wifi-password": "^3.0.1",
+    "wifi-qr-code-generator": "^1.1.1"
   }
 }
