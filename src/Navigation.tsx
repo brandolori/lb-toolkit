@@ -1,6 +1,6 @@
 import { Navbar, NavLink } from "@mantine/core";
 
-export type Route = "updater" | "home" | "cleaner" | "regex" | "wifi"
+export type Route = "updater" | "home" | "cleaner" | "regex" | "wifi" | "uppercase"
 
 type RouteNavProps = {
     currentRoute: Route;
@@ -40,7 +40,12 @@ export default ({ route, onChangeRoute }:
             routeName="regex" />
         <RouteNav
             currentRoute={route}
-            label="📶 Wifi password"
+            label="🕵️‍♂️ Wifi password"
             onChangeRoute={onChangeRoute}
             routeName="wifi" />
+        <RouteNav
+            currentRoute={route}
+            label="✒️ Text Casing"
+            onChangeRoute={onChangeRoute}
+            routeName="uppercase" />
     </Navbar>
