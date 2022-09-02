@@ -1,10 +1,12 @@
 const wifiPassword = require("./getWifiPassword");
 
-const wifiSSID = require("./getWifiSSID")
+const wifiSSID = require("./getWifiSSID");
 
-
-wifiSSID()
-    .then(ssid => wifiPassword(ssid))
-    .then(password => {
-        console.log(password);
-    });
+(async () => {
+    try {
+        const ssid = await wifiSSID()
+        console.log(ssid)
+        const pwd = await wifiPassword(ssid)
+        console.log(ssid)
+    } catch (e) { console.log(e) }
+})()
