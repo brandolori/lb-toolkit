@@ -183,7 +183,7 @@ const onReady = () => {
 
     ipcMain.handle('cmd:fetchUpdates', async () => {
 
-        const stdout = await handleCommand("winget", ["upgrade"])
+        const stdout = await handleCommand("winget", ["upgrade", "--include-unknown"])
         return stdout.substring(stdout.indexOf("Nome"))
 
     })
