@@ -194,6 +194,19 @@ const onReady = () => {
 
     })
 
+    ipcMain.handle('settings:getSettingValue', (ev, setting) => {
+        return getSettingValue(setting)
+    })
+
+    ipcMain.handle('settings:setSettingValue', (ev, setting, value) => {
+        return setSettingValue(setting, value)
+    })
+
+    ipcMain.handle('fs:appGetPath', async (ev, name) => {
+        return app.getPath(name)
+    })
+
+
     ipcMain.handle('fs:calculateFolderSize', async (ev, path) => {
         try {
             return dirSize(path) / 1_000_000
@@ -204,16 +217,9 @@ const onReady = () => {
     })
 
     ipcMain.handle('fs:getEnvironmentVariable', async (ev, variable) => {
-        return process.env[variable];
+        return process.env[variable]
     })
 
-    ipcMain.handle('settings:getSettingValue', (ev, setting) => {
-        return getSettingValue(setting)
-    })
-
-    ipcMain.handle('settings:setSettingValue', (ev, setting, value) => {
-        return setSettingValue(setting, value)
-    })
 
     ipcMain.handle('fs:deleteFolder', async (ev, folderPath) => {
         const content = await fp.readdir(folderPath)

@@ -4,7 +4,7 @@ import { AiOutlineReload } from "react-icons/ai"
 
 const folders: { name: string, path: string }[] = [
     {
-        path: `%USERPROFILE%\\Downloads`,
+        path: "<downloads>",
         name: "Downloads folder",
     },
     {
@@ -17,22 +17,30 @@ const substitute = async (path: string) => {
 
     let mutatedPath = path
 
-    const reg = /%[A-Z]+%/g
-    const promises = path.match(reg)?.map(async (subString) => {
-        const varName = subString.replaceAll("%", "")
-        const varValue = await window["electronAPI"].getEnvironmentVariable(varName)
-        mutatedPath = mutatedPath.replace(subString, varValue)
+    const envRegex = /%[A-Z]+%/g
+    const envPromises = path.match(envRegex)?.map(async (subString) => {
+        const envVarName = subString.replaceAll("%", "")
+        const envVarValue = await window["electronAPI"].getEnvironmentVariable(envVarName)
+        mutatedPath = mutatedPath.replace(subString, envVarValue)
     }) ?? [Promise.resolve()]
+    await Promise.all(envPromises)
 
-    await Promise.all(promises)
+    const appPathRegex = /<[a-z]+>/g
+    const appPathPromises = mutatedPath.match(appPathRegex)?.map(async (subString) => {
+        const appPathName = subString.replace("<", "").replace(">", "")
+        const appPathValue = await window["electronAPI"].appGetPath(appPathName)
+        mutatedPath = mutatedPath.replace(subString, appPathValue)
+    }) ?? [Promise.resolve()]
+    await Promise.all(appPathPromises)
+
     return mutatedPath
 }
 
 export default () => {
 
     const [sizes, setSizes] = useState<{ path: string, size: number }[]>([])
+    const [loading, setLoading] = useState(true)
 
-    const [deleting, setDeleting] = useState<string[]>([])
 
     const calculateSize = async (path: string): Promise<number> => {
 
@@ -42,13 +50,14 @@ export default () => {
     }
 
     const calculateAllSizes = async () => {
-
+        setLoading(true)
         const promises = folders.map(async el => {
             const size = await calculateSize(el.path)
             return { path: el.path, size: size }
         })
         const values = await Promise.all(promises)
         setSizes(values)
+        setLoading(false)
     }
 
     const deleteFolder = async (path: string) => {
@@ -68,7 +77,7 @@ export default () => {
 
         <Group>
             <Text>{cleanableSize} mb from {cleanableFolders} folder{cleanableFolders > 1 && "s"} can be cleaned</Text>
-            <ActionIcon onClick={() => calculateAllSizes()}>
+            <ActionIcon loading={loading} onClick={() => calculateAllSizes()}>
                 <AiOutlineReload />
             </ActionIcon>
 
