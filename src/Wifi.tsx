@@ -1,6 +1,6 @@
-import { ActionIcon, Group, Stack, Text, Image, Space } from "@mantine/core"
+import { ActionIcon, Group, Stack, Text, Image, Space, LoadingOverlay, Alert } from "@mantine/core"
 import { useEffect, useState } from "react"
-import { AiOutlineCopy } from "react-icons/ai"
+import { AiOutlineCopy, AiOutlineReload, AiOutlineWarning } from "react-icons/ai"
 
 const qrcode = require('wifi-qr-code-generator')
 
@@ -11,18 +11,28 @@ const copyToClipboard = (text: string) => {
 export default () => {
 
     const [qr, setQr] = useState("")
-    const [ssid, setSsid] = useState("ssid")
-    const [password, setPassword] = useState("pwd")
+    const [ssid, setSsid] = useState("")
+    const [password, setPassword] = useState("")
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(false)
 
     const retrieveConnectionDetails = async () => {
-        const { ssid, password } = await window["electronAPI"].retrieveConnectionDetails()
-        setSsid(ssid)
-        setPassword(password)
+        try {
+            setError(false)
+            setLoading(true)
+            const { ssid, password } = await window["electronAPI"].retrieveConnectionDetails()
+            setSsid(ssid)
+            setPassword(password)
+            setLoading(false)
+        }
+        catch (e) {
+            setError(true)
+        }
     }
 
     useEffect(() => {
         retrieveConnectionDetails()
-    })
+    }, [])
 
     useEffect(() => {
         const pr = qrcode.generateWifiQRCode({
@@ -37,14 +47,29 @@ export default () => {
 
 
     return <Stack>
-        <Image
-            style={{ pointerEvents: "none" }}
-            width={200} height={200}
-            radius="sm"
-            src={qr}
-            alt="Random unsplash image"
-            caption="Scan to connect"
-        />
+        {error &&
+            <Alert icon={<AiOutlineWarning size={16} />} title="Error" color="red" >
+                <Group>
+                    An error occurred while retrieving wifi connection information
+                    <ActionIcon variant="outline"
+                        onClick={() => retrieveConnectionDetails()}>
+                        <AiOutlineReload />
+                    </ActionIcon>
+                </Group>
+            </Alert>}
+        <div style={{ position: "relative", width: "fit-content", height: "fit-content" }}>
+            <LoadingOverlay visible={loading || error} overlayBlur={2} />
+
+            <Image
+                style={{ pointerEvents: "none" }}
+                width={200} height={200}
+                radius="sm"
+                src={qr}
+                withPlaceholder
+                alt="Random unsplash image"
+                caption="Scan to connect"
+            />
+        </div>
         <Space h="md" />
         <Group>
             <Text>
@@ -64,5 +89,5 @@ export default () => {
                 <AiOutlineCopy />
             </ActionIcon>
         </Group>
-    </Stack>
+    </Stack >
 }
