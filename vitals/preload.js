@@ -1,5 +1,5 @@
 "use strict"
-const { contextBridge, ipcRenderer } = require('electron')
+const { contextBridge, ipcRenderer, shell } = require('electron')
 
 contextBridge.exposeInMainWorld('electronAPI', {
     fetchUpdates: () => ipcRenderer.invoke('cmd:fetchUpdates'),
@@ -8,6 +8,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getEnvironmentVariable: (variable) => ipcRenderer.invoke("fs:getEnvironmentVariable", variable),
     appGetPath: (name) => ipcRenderer.invoke("fs:appGetPath", name),
     deleteFolder: (path) => ipcRenderer.invoke("fs:deleteFolder", path),
+    openFolder: (path) => {
+        console.log("trying to open", path)
+        shell.showItemInFolder(path)
+    },
     getSettingValue: (setting) => ipcRenderer.invoke("settings:getSettingValue", setting),
     setSettingValue: (setting, value) => ipcRenderer.invoke("settings:setSettingValue", setting, value),
     readyToShow: () => ipcRenderer.send('render:readyToShow'),

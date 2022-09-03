@@ -1,6 +1,6 @@
 import { ActionIcon, Button, Group, Stack, Text } from "@mantine/core"
 import { useEffect, useState } from "react"
-import { AiOutlineReload } from "react-icons/ai"
+import { AiOutlineFolderOpen, AiOutlineReload } from "react-icons/ai"
 
 const folders: { name: string, path: string }[] = [
     {
@@ -66,6 +66,11 @@ export default () => {
         calculateAllSizes()
     }
 
+    const showFolder = async (path: string) => {
+        const substitutedPath = await substitute(path)
+        window["electronAPI"].openFolder(substitutedPath)
+    }
+
     useEffect(() => {
         calculateAllSizes()
     }, [])
@@ -92,6 +97,9 @@ export default () => {
                         && sizes.find(size => size.path == el.path).size != 0)}>
                     Free {(sizes.find(size => size.path == el.path)?.size ?? 0).toFixed(0)} mb
                 </Button>
+                <ActionIcon variant="outline" onClick={() => showFolder(el.path)}>
+                    <AiOutlineFolderOpen />
+                </ActionIcon>
             </Group>
         )}
     </Stack>
