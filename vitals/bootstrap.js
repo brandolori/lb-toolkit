@@ -61,15 +61,15 @@ const unregisterColorPicker = () => {
     globalShortcut.unregister(keyCombo)
 }
 
-const atLoginFlag = "--login"
+// const atLoginFlag = "--login"
 
-const registerAtLogin = () => {
-    app.setLoginItemSettings({ openAtLogin: true, args: [atLoginFlag] })
-}
+// const registerAtLogin = () => {
+//     app.setLoginItemSettings({ openAtLogin: true, args: [atLoginFlag] })
+// }
 
-const unregisterAtLogin = () => {
-    app.setLoginItemSettings({ openAtLogin: false })
-}
+// const unregisterAtLogin = () => {
+//     app.setLoginItemSettings({ openAtLogin: false })
+// }
 
 const createWindow = () => {
     // Create the browser window.
@@ -171,14 +171,14 @@ const onReady = () => {
             unregisterColorPicker()
     })
 
-    if (app.isPackaged) {
-        settingsChangeEmitter.on(SettingsItem.enableRunOnStartup, (value) => {
-            if (value)
-                registerAtLogin()
-            else
-                unregisterAtLogin()
-        })
-    }
+    // if (app.isPackaged) {
+    //     settingsChangeEmitter.on(SettingsItem.enableRunOnStartup, (value) => {
+    //         if (value)
+    //             registerAtLogin()
+    //         else
+    //             unregisterAtLogin()
+    //     })
+    // }
 
 
     ipcMain.handle('cmd:fetchUpdates', async () => {
@@ -230,8 +230,8 @@ const onReady = () => {
         return { ssid, password }
     })
 
-    if (!process.argv.includes(atLoginFlag))
-        createWindow()
+    // if (!process.argv.includes(atLoginFlag))
+    createWindow()
 }
 
 module.exports = onReady

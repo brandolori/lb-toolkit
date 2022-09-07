@@ -21,10 +21,10 @@ const settings: Setting[] = [
         key: SettingsItem.enableMediaControls,
         name: "Enable tray media controls"
     },
-    {
-        key: SettingsItem.enableRunOnStartup,
-        name: "Enable run on startup"
-    }
+    // {
+    //     key: SettingsItem.enableRunOnStartup,
+    //     name: "Enable run on startup"
+    // }
 ]
 
 const defaultState: SettingState[] = settings.map(el => ({
