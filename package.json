@@ -1,6 +1,6 @@
 {
   "name": "lb-toolkit",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "private": true,
   "homepage": "./",
   "main": "vitals/main.js",
@@ -13,7 +13,7 @@
     "react-start": "react-scripts start",
     "elect-start": "electron .",
     "react-build": "react-scripts build",
-    "elect-package": "npx electron-packager . --overwrite --ignore=\\installer --ignore=\\public --icon=assets\\favicon.ico",
+    "elect-package": "electron-packager . --overwrite --ignore=\\installer --ignore=\\public --icon=assets\\favicon.ico --win32metadata.requested-execution-level=requireAdministrator",
     "elect-publish": "node ./vitals/generate-installer.mjs",
     "elect-rebuild": "npm rebuild --runtime=electron --target=19.0.0-alpha.1 --dist-url=https://electronjs.org/headers --abi=93",
     "build": "npm run react-build && npm run elect-package && npm run elect-publish"
@@ -57,9 +57,7 @@
   },
   "dependencies": {
     "execa": "^6.1.0",
-    "iconv": "^3.0.1",
     "robotjs": "^0.6.0",
-    "wifi-password": "^3.0.1",
     "wifi-qr-code-generator": "^1.1.1"
   }
 }

@@ -183,7 +183,7 @@ const onReady = () => {
 
     ipcMain.handle('cmd:fetchUpdates', async () => {
 
-        const stdout = await handleCommand("winget", ["upgrade"])
+        const stdout = await handleCommand("winget", ["upgrade", "--include-unknown"])
         return stdout.substring(stdout.indexOf("Nome"))
 
     })
@@ -193,6 +193,19 @@ const onReady = () => {
         return stdout
 
     })
+
+    ipcMain.handle('settings:getSettingValue', (ev, setting) => {
+        return getSettingValue(setting)
+    })
+
+    ipcMain.handle('settings:setSettingValue', (ev, setting, value) => {
+        return setSettingValue(setting, value)
+    })
+
+    ipcMain.handle('fs:appGetPath', async (ev, name) => {
+        return app.getPath(name)
+    })
+
 
     ipcMain.handle('fs:calculateFolderSize', async (ev, path) => {
         try {
@@ -204,16 +217,9 @@ const onReady = () => {
     })
 
     ipcMain.handle('fs:getEnvironmentVariable', async (ev, variable) => {
-        return process.env[variable];
+        return process.env[variable]
     })
 
-    ipcMain.handle('settings:getSettingValue', (ev, setting) => {
-        return getSettingValue(setting)
-    })
-
-    ipcMain.handle('settings:setSettingValue', (ev, setting, value) => {
-        return setSettingValue(setting, value)
-    })
 
     ipcMain.handle('fs:deleteFolder', async (ev, folderPath) => {
         const content = await fp.readdir(folderPath)
