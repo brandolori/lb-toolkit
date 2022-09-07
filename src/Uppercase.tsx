@@ -53,6 +53,10 @@ export default () => {
             label="Enable toLowerCase() pre-pass"
         />
         <Textarea
+            autoFocus
+            autosize
+            minRows={2}
+            maxRows={3}
             spellCheck={false}
             label="Input text"
             onChange={(el) => setInputText(el.target.value)}

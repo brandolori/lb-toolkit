@@ -52,6 +52,7 @@ export default () => {
 
     return <Stack style={{ height: "100%" }}>
         <TextInput
+            autoFocus
             spellCheck={false}
             label="Regular Expression"
             onChange={(el) => setRegex(el.target.value)}
