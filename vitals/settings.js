@@ -43,8 +43,4 @@ const setSettingValue = (setting, value) => {
     settingsChangeEmitter.emit(setting, value)
 }
 
-// emit the current values on startup
-Object.keys(data).forEach(el => settingsChangeEmitter.emit(el, data[el]))
-
-
 module.exports = { getSettingValue, setSettingValue, settingsChangeEmitter, SettingsItem }
