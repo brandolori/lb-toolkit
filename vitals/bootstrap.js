@@ -40,7 +40,7 @@ let mainWindow
 /** @type BrowserWindow */
 let clipboardWindow
 
-let windowsById = {}
+let windowsByWebcontentsId = {}
 
 const colorPickerKeyCombo = 'super+control+x'
 
@@ -71,7 +71,7 @@ const createClipboardWindow = () => {
         }
     });
 
-    windowsById[clipboardWindow.id] = clipboardWindow
+    windowsByWebcontentsId[clipboardWindow.webContents.id] = clipboardWindow
 
     clipboardWindow.removeMenu()
 
@@ -84,8 +84,8 @@ const createClipboardWindow = () => {
         clipboardWindow.close()
     })
 
-    clipboardWindow.on('closed', () => {
-        delete windowsById[clipboardWindow.id]
+    clipboardWindow.on('close', () => {
+        delete windowsByWebcontentsId[clipboardWindow.webContents.id]
         clipboardWindow = null
     })
 
@@ -121,7 +121,7 @@ const createMainWindow = () => {
         }
     })
 
-    windowsById[mainWindow.id] = mainWindow
+    windowsByWebcontentsId[mainWindow.webContents.id] = mainWindow
 
     mainWindow.removeMenu()
 
@@ -134,8 +134,8 @@ const createMainWindow = () => {
     if (!app.isPackaged)
         mainWindow.webContents.openDevTools();
 
-    mainWindow.on('closed', () => {
-        delete windowsById[mainWindow.id]
+    mainWindow.on('close', () => {
+        delete windowsByWebcontentsId[mainWindow.webContents.id]
         mainWindow = null
     })
 }
@@ -184,7 +184,7 @@ const onReady = () => {
     })
 
     ipcMain.on("render:readyToShow", (ev) => {
-        const window = windowsById[ev.sender.id]
+        const window = windowsByWebcontentsId[ev.sender.id]
         window.show()
     })
 
