@@ -1,5 +1,5 @@
 import { AzureSASCredential, TableClient } from "@azure/data-tables";
-import { ActionIcon, Badge, Button, Card, Group, Space, Stack, Text } from "@mantine/core";
+import { ActionIcon, Button, Card, Group, Space, Stack, Text } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { AiOutlineReload } from "react-icons/ai";
 

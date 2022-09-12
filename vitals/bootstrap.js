@@ -1,15 +1,11 @@
-const path = require('path');
 const { join } = require('path');
 const robot = require("robotjs");
-const fp = require('fs').promises
-const { getSettingValue, settingsChangeEmitter, SettingsItem, setSettingValue } = require("./settings");
+const { getSettingValue, settingsChangeEmitter, SettingsItem } = require("./settings");
 const { Tray, globalShortcut, clipboard, BrowserWindow, app, Menu, ipcMain, nativeTheme } = require("electron");
-const { dirSize, handleCommand } = require('./utils');
-const getWifiSSID = require('./getWifiSSID');
-const getWifiPassword = require('./getWifiPassword');
 const clipboardListener = require('clipboard-event');
 const { v4: uuidv4 } = require('uuid');
-const tableClient = require("./clipboard")
+const tableClient = require("./clipboard");
+const initMessageHandlers = require('./initMessageHandlers');
 
 let ignoreSingleCopy = false
 
@@ -30,7 +26,7 @@ clipboardListener.on('change', async () => {
                 rowKey: uuidv4(),
                 text: clipboard.readText()
             })
-            mainWindow?.webContents.send('clipboard:change', 1)
+            mainWindow?.webContents.send('clipboard:change')
         }
     }
 });
@@ -38,6 +34,7 @@ clipboardListener.on('change', async () => {
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
+
 /** @type BrowserWindow */
 let mainWindow
 /** @type BrowserWindow */
@@ -124,6 +121,14 @@ const createClipboardWindow = () => {
 
 }
 
+const showOrCreateMainWindow = () => {
+    if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.focus()
+    } else {
+        createMainWindow()
+    }
+}
+
 const createMainWindow = () => {
     // Create the browser window.
     mainWindow = new BrowserWindow({
@@ -175,22 +180,14 @@ const createMainWindow = () => {
     })
 }
 
-const showOrRecreateMainWindow = () => {
-    if (mainWindow) {
-        mainWindow.focus()
-    } else {
-        createMainWindow()
-    }
-}
-
 const onReady = () => {
 
     mainIcon = new Tray(join(__dirname, "../assets/favicon.ico"))
     mainIcon.addListener("click", () => {
-        showOrRecreateMainWindow()
+        showOrCreateMainWindow()
     })
     app.on("second-instance", () => {
-        showOrRecreateMainWindow()
+        showOrCreateMainWindow()
     })
 
     mainIcon.setContextMenu(Menu.buildFromTemplate([
@@ -236,60 +233,7 @@ const onReady = () => {
             unregisterColorPicker()
     })
 
-    ipcMain.handle('cmd:fetchUpdates', async () => {
-
-        const stdout = await handleCommand("winget", ["upgrade", "--include-unknown"])
-        return stdout.substring(stdout.indexOf("Nome"))
-
-    })
-
-    ipcMain.handle('cmd:updatePackage', async (ev, packageName) => {
-        const stdout = await handleCommand("winget", ["upgrade", packageName])
-        return stdout
-
-    })
-
-    ipcMain.handle('settings:getSettingValue', (ev, setting) => {
-        return getSettingValue(setting)
-    })
-
-    ipcMain.handle('settings:setSettingValue', (ev, setting, value) => {
-        return setSettingValue(setting, value)
-    })
-
-    ipcMain.handle('fs:appGetPath', async (ev, name) => {
-        return app.getPath(name)
-    })
-
-
-    ipcMain.handle('fs:calculateFolderSize', async (ev, path) => {
-        try {
-            return dirSize(path) / 1_000_000
-        } catch (e) {
-            console.log(e)
-            return 0
-        }
-    })
-
-    ipcMain.handle('fs:getEnvironmentVariable', async (ev, variable) => {
-        return process.env[variable]
-    })
-
-
-    ipcMain.handle('fs:deleteFolder', async (ev, folderPath) => {
-        const content = await fp.readdir(folderPath)
-        const promises = content.map(async file => {
-            await fp.rm(path.join(folderPath, file), { recursive: true })
-        })
-        await Promise.all(promises)
-    })
-
-    ipcMain.handle('wifi:retrieveConnectionDetails', async () => {
-        const ssid = await getWifiSSID()
-        const password = await getWifiPassword(ssid)
-
-        return { ssid, password }
-    })
+    initMessageHandlers()
 
     // if (!process.argv.includes(atLoginFlag))
     createMainWindow()
