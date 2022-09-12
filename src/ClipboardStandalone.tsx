@@ -4,7 +4,7 @@ import ClipboardSync from "./ClipboardSync"
 
 export default () => {
     useEffect(() => {
-        window["electronAPI"].clipboardReadyToShow()
+        window["electronAPI"].readyToShow()
     }, [])
     return <Container className="header" py="xl">
         <ClipboardSync />

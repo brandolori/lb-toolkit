@@ -15,7 +15,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getSettingValue: (setting) => ipcRenderer.invoke("settings:getSettingValue", setting),
     setSettingValue: (setting, value) => ipcRenderer.invoke("settings:setSettingValue", setting, value),
     readyToShow: () => ipcRenderer.send('render:readyToShow'),
-    clipboardReadyToShow: () => ipcRenderer.send('render:clipboardReadyToShow'),
     retrieveConnectionDetails: () => ipcRenderer.invoke('wifi:retrieveConnectionDetails'),
     handleClipboardChange: (callback) => {
         ipcRenderer.removeAllListeners("clipboard:change")

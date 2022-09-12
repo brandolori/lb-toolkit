@@ -6,6 +6,7 @@ const clipboardListener = require('clipboard-event');
 const { v4: uuidv4 } = require('uuid');
 const tableClient = require("./clipboard");
 const initMessageHandlers = require('./initMessageHandlers');
+const { createMediaTrays, destroyMediaTrays, createMainTray } = require('./trays');
 
 let ignoreSingleCopy = false
 
@@ -31,7 +32,6 @@ clipboardListener.on('change', async () => {
     }
 });
 
-
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 
@@ -40,40 +40,7 @@ let mainWindow
 /** @type BrowserWindow */
 let clipboardWindow
 
-/** @type Tray */
-let next
-
-/** @type Tray */
-let prev
-
-/** @type Tray */
-let playPause
-
-/** @type Tray */
-let mainIcon
-
-const createTrays = () => {
-    next = new Tray(join(__dirname, "../assets/next.ico"))
-    next.addListener("click", () => {
-        robot.keyTap("audio_next")
-    })
-
-    prev = new Tray(join(__dirname, "../assets/back.ico"))
-    prev.addListener("click", () => {
-        robot.keyTap("audio_prev")
-    })
-
-    playPause = new Tray(join(__dirname, "../assets/play.ico"))
-    playPause.addListener("click", () => {
-        robot.keyTap("audio_play")
-    })
-}
-
-const destroyTrays = () => {
-    next.destroy()
-    prev.destroy()
-    playPause.destroy()
-}
+let windowsById = {}
 
 const colorPickerKeyCombo = 'super+control+x'
 
@@ -104,6 +71,8 @@ const createClipboardWindow = () => {
         }
     });
 
+    windowsById[clipboardWindow.id] = clipboardWindow
+
     clipboardWindow.removeMenu()
 
     const baseUrl = app.isPackaged
@@ -111,18 +80,19 @@ const createClipboardWindow = () => {
         : 'http://localhost:3000'
     clipboardWindow.loadURL(`${baseUrl}?page=clipboard`);
 
-    ipcMain.on("render:clipboardReadyToShow", () => {
-        clipboardWindow.show()
-    })
-
     clipboardWindow.on("blur", () => {
         clipboardWindow.close()
+    })
+
+    clipboardWindow.on('closed', () => {
+        delete windowsById[clipboardWindow.id]
+        clipboardWindow = null
     })
 
 }
 
 const showOrCreateMainWindow = () => {
-    if (mainWindow && !mainWindow.isDestroyed()) {
+    if (mainWindow) {
         mainWindow.focus()
     } else {
         createMainWindow()
@@ -149,7 +119,9 @@ const createMainWindow = () => {
             devTools: !app.isPackaged,
             webSecurity: false
         }
-    });
+    })
+
+    windowsById[mainWindow.id] = mainWindow
 
     mainWindow.removeMenu()
 
@@ -162,69 +134,34 @@ const createMainWindow = () => {
     if (!app.isPackaged)
         mainWindow.webContents.openDevTools();
 
-    // Emitted when the window is closed.
-    mainWindow.on('closed', function () {
-        // Dereference the window object, usually you would store windows
-        // in an array if your app supports multi windows, this is the time
-        // when you should delete the corresponding element.
+    mainWindow.on('closed', () => {
+        delete windowsById[mainWindow.id]
         mainWindow = null
-    })
-
-    ipcMain.on("render:readyToShow", () => {
-        mainWindow.show()
-    })
-
-    ipcMain.on("clipboard:paste", (ev, text) => {
-        ignoreSingleCopy = true
-        clipboard.writeText(text)
     })
 }
 
 const onReady = () => {
 
-    mainIcon = new Tray(join(__dirname, "../assets/favicon.ico"))
-    mainIcon.addListener("click", () => {
-        showOrCreateMainWindow()
-    })
+    createMainTray(() => showOrCreateMainWindow(), () => app.quit())
+
     app.on("second-instance", () => {
         showOrCreateMainWindow()
     })
 
-    mainIcon.setContextMenu(Menu.buildFromTemplate([
-        {
-            label: 'Show',
-            click: () => {
-                createMainWindow()
-            }
-        },
-        {
-            label: 'Quit',
-            click: () => {
-                app.quit() // actually quit the app.
-            }
-        },
-    ]))
-
     // enable media tray icons, then register on setting change
     if (getSettingValue(SettingsItem.enableMediaControls))
-        createTrays()
+        createMediaTrays()
 
     settingsChangeEmitter.on(SettingsItem.enableMediaControls, (value) => {
         if (value)
-            createTrays()
+            createMediaTrays()
         else
-            destroyTrays()
+            destroyMediaTrays()
     })
 
     // enable color picker, then register on setting change
     if (getSettingValue(SettingsItem.enableColorPicker))
         registerColorPicker()
-
-    globalShortcut.register("super+control+b", () => {
-        if (!clipboardWindow || clipboardWindow.isDestroyed()) {
-            createClipboardWindow()
-        }
-    })
 
     settingsChangeEmitter.on(SettingsItem.enableColorPicker, (value) => {
         if (value)
@@ -233,7 +170,23 @@ const onReady = () => {
             unregisterColorPicker()
     })
 
+    globalShortcut.register("super+control+b", () => {
+        if (!clipboardWindow) {
+            createClipboardWindow()
+        }
+    })
+
     initMessageHandlers()
+
+    ipcMain.on("clipboard:paste", (ev, text) => {
+        ignoreSingleCopy = true
+        clipboard.writeText(text)
+    })
+
+    ipcMain.on("render:readyToShow", (ev) => {
+        const window = windowsById[ev.sender.id]
+        window.show()
+    })
 
     // if (!process.argv.includes(atLoginFlag))
     createMainWindow()
