@@ -40,6 +40,8 @@ clipboardListener.on('change', async () => {
 // be closed automatically when the JavaScript object is garbage collected.
 /** @type BrowserWindow */
 let mainWindow
+/** @type BrowserWindow */
+let clipboardWindow
 
 /** @type Tray */
 let next
@@ -76,20 +78,53 @@ const destroyTrays = () => {
     playPause.destroy()
 }
 
-const keyCombo = 'super+control+x'
+const colorPickerKeyCombo = 'super+control+x'
 
 const registerColorPicker = () => {
-    globalShortcut.register(keyCombo, () => {
+    globalShortcut.register(colorPickerKeyCombo, () => {
         const { x, y } = robot.getMousePos()
         clipboard.writeText(robot.getPixelColor(x, y))
     })
 }
 
 const unregisterColorPicker = () => {
-    globalShortcut.unregister(keyCombo)
+    globalShortcut.unregister(colorPickerKeyCombo)
 }
 
-const createWindow = () => {
+const createClipboardWindow = () => {
+    clipboardWindow = new BrowserWindow({
+        show: false,
+        skipTaskbar: true,
+        width: 400,
+        height: 400,
+        resizable: false,
+        backgroundColor: nativeTheme.shouldUseDarkColors ? "#1a1b1e" : undefined,
+        titleBarStyle: "hidden",
+        webPreferences: {
+            preload: join(__dirname, 'preload.js'),
+            devTools: !app.isPackaged,
+            webSecurity: false
+        }
+    });
+
+    clipboardWindow.removeMenu()
+
+    const baseUrl = app.isPackaged
+        ? `file://${join(__dirname, '../build/index.html')}`
+        : 'http://localhost:3000'
+    clipboardWindow.loadURL(`${baseUrl}?page=clipboard`);
+
+    ipcMain.on("render:clipboardReadyToShow", () => {
+        clipboardWindow.show()
+    })
+
+    clipboardWindow.on("blur", () => {
+        clipboardWindow.close()
+    })
+
+}
+
+const createMainWindow = () => {
     // Create the browser window.
     mainWindow = new BrowserWindow({
         show: false,
@@ -144,7 +179,7 @@ const showOrRecreateMainWindow = () => {
     if (mainWindow) {
         mainWindow.focus()
     } else {
-        createWindow()
+        createMainWindow()
     }
 }
 
@@ -162,7 +197,7 @@ const onReady = () => {
         {
             label: 'Show',
             click: () => {
-                createWindow()
+                createMainWindow()
             }
         },
         {
@@ -187,6 +222,12 @@ const onReady = () => {
     // enable color picker, then register on setting change
     if (getSettingValue(SettingsItem.enableColorPicker))
         registerColorPicker()
+
+    globalShortcut.register("super+control+b", () => {
+        if (!clipboardWindow || clipboardWindow.isDestroyed()) {
+            createClipboardWindow()
+        }
+    })
 
     settingsChangeEmitter.on(SettingsItem.enableColorPicker, (value) => {
         if (value)
@@ -251,7 +292,7 @@ const onReady = () => {
     })
 
     // if (!process.argv.includes(atLoginFlag))
-    createWindow()
+    createMainWindow()
 }
 
 module.exports = onReady

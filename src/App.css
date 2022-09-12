@@ -8,5 +8,8 @@ body {
 
 .header {
     -webkit-app-region: drag;
-    /* height: env(titlebar-area-height); */
+}
+
+.header * {
+    -webkit-app-region: none;
 }
