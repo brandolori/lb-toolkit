@@ -6,13 +6,17 @@ const { EventEmitter } = require('stream');
 const SettingsItem = {
     enableColorPicker: "enableColorPicker",
     enableMediaControls: "enableMediaControls",
-    enableRunOnStartup: "enableRunOnStartup"
+    azureStorageAccount: "azureStorageAccount",
+    azureSASToken: "azureSASToken",
+    azureTableName: "azureTableName"
 }
 
 const DefaultValues = {
     [SettingsItem.enableColorPicker]: true,
     [SettingsItem.enableMediaControls]: true,
-    [SettingsItem.enableRunOnStartup]: true,
+    [SettingsItem.azureStorageAccount]: "",
+    [SettingsItem.azureSASToken]: "",
+    [SettingsItem.azureTableName]: "",
 }
 
 const settingsFileName = "settings.json"

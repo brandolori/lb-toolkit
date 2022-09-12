@@ -7,6 +7,34 @@ const { Tray, globalShortcut, clipboard, BrowserWindow, app, Menu, ipcMain, nati
 const { dirSize, handleCommand } = require('./utils');
 const getWifiSSID = require('./getWifiSSID');
 const getWifiPassword = require('./getWifiPassword');
+const clipboardListener = require('clipboard-event');
+const { v4: uuidv4 } = require('uuid');
+const tableClient = require("./clipboard")
+
+let ignoreSingleCopy = false
+
+clipboardListener.startListening();
+
+clipboardListener.on('change', async () => {
+    if (clipboard.availableFormats().includes("text/plain")) {
+        if (ignoreSingleCopy) {
+            ignoreSingleCopy = false
+            return
+        }
+
+        const text = clipboard.readText()
+
+        if (text.replace("\r", "").replace(" ", "").replace("\n", "").length > 0) {
+            await tableClient.createEntity({
+                partitionKey: "pc",
+                rowKey: uuidv4(),
+                text: clipboard.readText()
+            })
+            mainWindow?.webContents.send('clipboard:change', 1)
+        }
+    }
+});
+
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -61,16 +89,6 @@ const unregisterColorPicker = () => {
     globalShortcut.unregister(keyCombo)
 }
 
-// const atLoginFlag = "--login"
-
-// const registerAtLogin = () => {
-//     app.setLoginItemSettings({ openAtLogin: true, args: [atLoginFlag] })
-// }
-
-// const unregisterAtLogin = () => {
-//     app.setLoginItemSettings({ openAtLogin: false })
-// }
-
 const createWindow = () => {
     // Create the browser window.
     mainWindow = new BrowserWindow({
@@ -89,6 +107,7 @@ const createWindow = () => {
         webPreferences: {
             preload: join(__dirname, 'preload.js'),
             devTools: !app.isPackaged,
+            webSecurity: false
         }
     });
 
@@ -113,6 +132,11 @@ const createWindow = () => {
 
     ipcMain.on("render:readyToShow", () => {
         mainWindow.show()
+    })
+
+    ipcMain.on("clipboard:paste", (ev, text) => {
+        ignoreSingleCopy = true
+        clipboard.writeText(text)
     })
 }
 
@@ -171,16 +195,6 @@ const onReady = () => {
             unregisterColorPicker()
     })
 
-    // if (app.isPackaged) {
-    //     settingsChangeEmitter.on(SettingsItem.enableRunOnStartup, (value) => {
-    //         if (value)
-    //             registerAtLogin()
-    //         else
-    //             unregisterAtLogin()
-    //     })
-    // }
-
-
     ipcMain.handle('cmd:fetchUpdates', async () => {
 
         const stdout = await handleCommand("winget", ["upgrade", "--include-unknown"])
@@ -229,7 +243,7 @@ const onReady = () => {
         await Promise.all(promises)
     })
 
-    ipcMain.handle('wifi:retrieveConnectionDetails', async (ev) => {
+    ipcMain.handle('wifi:retrieveConnectionDetails', async () => {
         const ssid = await getWifiSSID()
         const password = await getWifiPassword(ssid)
 

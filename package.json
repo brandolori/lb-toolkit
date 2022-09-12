@@ -56,7 +56,10 @@
     "wifi-qr-code-generator": "^1.1.1"
   },
   "dependencies": {
+    "@azure/data-tables": "^13.2.0",
+    "clipboard-event": "^1.6.0",
     "execa": "^6.1.0",
-    "robotjs": "^0.6.0"
+    "robotjs": "^0.6.0",
+    "uuid": "^9.0.0"
   }
 }
