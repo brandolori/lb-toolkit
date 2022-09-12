@@ -1,7 +1,7 @@
 const { join } = require('path');
 const robot = require("robotjs");
 const { getSettingValue, settingsChangeEmitter, SettingsItem } = require("./settings");
-const { Tray, globalShortcut, clipboard, BrowserWindow, app, Menu, ipcMain, nativeTheme } = require("electron");
+const { globalShortcut, clipboard, BrowserWindow, app, ipcMain, nativeTheme } = require("electron");
 const clipboardListener = require('clipboard-event');
 const { v4: uuidv4 } = require('uuid');
 const tableClient = require("./clipboard");
