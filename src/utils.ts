@@ -12,7 +12,6 @@ const substitutePath = async (path: string) => {
 
     const appPathRegex = /<[A-Za-z]+>/g
     const appPathPromises = mutatedPath.match(appPathRegex)?.map(async (subString) => {
-        console.log("substituting", subString)
         const appPathName = subString.replace("<", "").replace(">", "")
         const appPathValue = await window["electronAPI"].appGetPath(appPathName)
         mutatedPath = mutatedPath.replace(subString, appPathValue)
