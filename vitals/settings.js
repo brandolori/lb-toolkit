@@ -6,13 +6,17 @@ const { EventEmitter } = require('stream');
 const SettingsItem = {
     enableColorPicker: "enableColorPicker",
     enableMediaControls: "enableMediaControls",
-    enableRunOnStartup: "enableRunOnStartup"
+    azureStorageAccount: "azureStorageAccount",
+    azureSASToken: "azureSASToken",
+    azureTableName: "azureTableName"
 }
 
 const DefaultValues = {
     [SettingsItem.enableColorPicker]: true,
     [SettingsItem.enableMediaControls]: true,
-    [SettingsItem.enableRunOnStartup]: true,
+    [SettingsItem.azureStorageAccount]: "",
+    [SettingsItem.azureSASToken]: "",
+    [SettingsItem.azureTableName]: "",
 }
 
 const settingsFileName = "settings.json"
@@ -38,9 +42,5 @@ const setSettingValue = (setting, value) => {
     fs.writeFileSync(settingsFilePath, JSON.stringify(data))
     settingsChangeEmitter.emit(setting, value)
 }
-
-// emit the current values on startup
-Object.keys(data).forEach(el => settingsChangeEmitter.emit(el, data[el]))
-
 
 module.exports = { getSettingValue, setSettingValue, settingsChangeEmitter, SettingsItem }

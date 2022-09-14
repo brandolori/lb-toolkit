@@ -1,14 +1,13 @@
 import { ActionIcon, AppShell, Button, Container, Group, Header, Loader, Navbar, Stack, Text } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
-import { AiOutlineReload } from 'react-icons/ai'
 import Navigation, { Route } from './Navigation';
 import Updater from './Updater';
-import "./App.css"
 import Cleaner from './Cleaner';
 import Main from './Main';
 import Regex from './Regex';
 import Wifi from './Wifi';
 import Uppercase from './Uppercase';
+import ClipboardSync from './ClipboardSync';
 
 const titleBarHeight = 41
 //window.navigator["windowControlsOverlay"].getTitlebarAreaRect().height
@@ -35,18 +34,23 @@ const App = () => {
         header={<TitleBar />}
         navbar={<Navigation route={route} onChangeRoute={(route) => setRoute(route)} />}
     >
-        {route == "home" &&
-            <Main />}
-        {route == "updater" &&
-            <Updater />}
-        {route == "cleaner" &&
-            <Cleaner />}
-        {route == "regex" &&
-            <Regex />}
-        {route == "wifi" &&
-            <Wifi/>}
-        {route == "uppercase" &&
-            <Uppercase/>}
+        <Container>
+
+            {route == "home" &&
+                <Main />}
+            {route == "updater" &&
+                <Updater />}
+            {route == "cleaner" &&
+                <Cleaner />}
+            {route == "regex" &&
+                <Regex />}
+            {route == "wifi" &&
+                <Wifi />}
+            {route == "uppercase" &&
+                <Uppercase />}
+            {route == "clipboard" &&
+                <ClipboardSync />}
+        </Container>
 
     </AppShell>
 }

@@ -34,7 +34,7 @@ export default () => {
 
     }, [inputString, transform, toLowerCase])
 
-    return <Stack>
+    return <Stack style={{ height: "100%" }}>
         <SegmentedControl
             data={[
                 { label: 'Uppercase first letter', value: 'capitalize' },
@@ -53,13 +53,16 @@ export default () => {
             label="Enable toLowerCase() pre-pass"
         />
         <Textarea
+            autoFocus
+            autosize
+            minRows={2}
+            maxRows={3}
             spellCheck={false}
-            label="Text to check"
+            label="Input text"
             onChange={(el) => setInputText(el.target.value)}
             withAsterisk />
-        <Card shadow="md" p="xs">
+        <Card shadow="md" p="xs" style={{ flex: "1 1 100px", overflowY: "auto" }}>
             <Text style={{
-                height: 100,
                 overflowY: "auto",
                 overflowWrap: "anywhere",
                 whiteSpace: "pre-wrap",

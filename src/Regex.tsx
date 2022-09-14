@@ -50,8 +50,9 @@ export default () => {
 
     }, [regex, inputString])
 
-    return <Stack>
+    return <Stack style={{ height: "100%" }}>
         <TextInput
+            autoFocus
             spellCheck={false}
             label="Regular Expression"
             onChange={(el) => setRegex(el.target.value)}
@@ -62,8 +63,8 @@ export default () => {
             label="Text to check"
             onChange={(el) => setInputString(el.target.value)}
             withAsterisk />
-        <Card shadow="md" p="xs">
-            <pre style={{ margin: 0, height: 100, overflowY: "auto", overflowWrap: "anywhere", whiteSpace: "pre-wrap" }}>
+        <Card shadow="md" p="xs" style={{ flex: "1 1 100px", overflowY: "auto" }}>
+            <pre style={{ margin: 0, overflowY: "auto", overflowWrap: "anywhere", whiteSpace: "pre-wrap" }}>
                 {outputString.map((el, i) => el.highlighted
                     // gli elementi evidenziati sono sempre dispari
                     ? <Mark color={Math.round(i / 2) % 2 == 0 ? "orange" : "pink"} key={i}>{el.text}</Mark>

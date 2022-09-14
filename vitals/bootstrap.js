@@ -1,77 +1,105 @@
-const path = require('path');
 const { join } = require('path');
 const robot = require("robotjs");
-const fp = require('fs').promises
-const { getSettingValue, settingsChangeEmitter, SettingsItem, setSettingValue } = require("./settings");
-const { Tray, globalShortcut, clipboard, BrowserWindow, app, Menu, ipcMain, nativeTheme } = require("electron");
-const { dirSize, handleCommand } = require('./utils');
-const getWifiSSID = require('./getWifiSSID');
-const getWifiPassword = require('./getWifiPassword');
+const { getSettingValue, settingsChangeEmitter, SettingsItem } = require("./settings");
+const { globalShortcut, clipboard, BrowserWindow, app, ipcMain, nativeTheme } = require("electron");
+const clipboardListener = require('clipboard-event');
+const { v4: uuidv4 } = require('uuid');
+const tableClient = require("./clipboard");
+const initMessageHandlers = require('./initMessageHandlers');
+const { createMediaTrays, destroyMediaTrays, createMainTray } = require('./trays');
+
+let ignoreSingleCopy = false
+
+clipboardListener.startListening();
+
+clipboardListener.on('change', async () => {
+    if (clipboard.availableFormats().includes("text/plain")) {
+        if (ignoreSingleCopy) {
+            ignoreSingleCopy = false
+            return
+        }
+
+        const text = clipboard.readText()
+
+        if (text.replace("\r", "").replace(" ", "").replace("\n", "").length > 0) {
+            await tableClient.createEntity({
+                partitionKey: "pc",
+                rowKey: uuidv4(),
+                text: clipboard.readText()
+            })
+            mainWindow?.webContents.send('clipboard:change')
+        }
+    }
+});
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
+
 /** @type BrowserWindow */
 let mainWindow
+/** @type BrowserWindow */
+let clipboardWindow
 
-/** @type Tray */
-let next
+let windowsByWebcontentsId = {}
 
-/** @type Tray */
-let prev
-
-/** @type Tray */
-let playPause
-
-/** @type Tray */
-let mainIcon
-
-const createTrays = () => {
-    next = new Tray(join(__dirname, "../assets/next.ico"))
-    next.addListener("click", () => {
-        robot.keyTap("audio_next")
-    })
-
-    prev = new Tray(join(__dirname, "../assets/back.ico"))
-    prev.addListener("click", () => {
-        robot.keyTap("audio_prev")
-    })
-
-    playPause = new Tray(join(__dirname, "../assets/play.ico"))
-    playPause.addListener("click", () => {
-        robot.keyTap("audio_play")
-    })
-}
-
-const destroyTrays = () => {
-    next.destroy()
-    prev.destroy()
-    playPause.destroy()
-}
-
-const keyCombo = 'super+control+x'
+const colorPickerKeyCombo = 'super+control+x'
 
 const registerColorPicker = () => {
-    globalShortcut.register(keyCombo, () => {
+    globalShortcut.register(colorPickerKeyCombo, () => {
         const { x, y } = robot.getMousePos()
         clipboard.writeText(robot.getPixelColor(x, y))
     })
 }
 
 const unregisterColorPicker = () => {
-    globalShortcut.unregister(keyCombo)
+    globalShortcut.unregister(colorPickerKeyCombo)
 }
 
-const atLoginFlag = "--login"
+const createClipboardWindow = () => {
+    clipboardWindow = new BrowserWindow({
+        show: false,
+        skipTaskbar: true,
+        width: 400,
+        height: 400,
+        resizable: false,
+        backgroundColor: nativeTheme.shouldUseDarkColors ? "#1a1b1e" : undefined,
+        titleBarStyle: "hidden",
+        webPreferences: {
+            preload: join(__dirname, 'preload.js'),
+            devTools: !app.isPackaged,
+            webSecurity: false
+        }
+    });
 
-const registerAtLogin = () => {
-    app.setLoginItemSettings({ openAtLogin: true, args: [atLoginFlag] })
+    windowsByWebcontentsId[clipboardWindow.webContents.id] = clipboardWindow
+
+    clipboardWindow.removeMenu()
+
+    const baseUrl = app.isPackaged
+        ? `file://${join(__dirname, '../build/index.html')}`
+        : 'http://localhost:3000'
+    clipboardWindow.loadURL(`${baseUrl}?page=clipboard`);
+
+    clipboardWindow.on("blur", () => {
+        clipboardWindow.close()
+    })
+
+    clipboardWindow.on('close', () => {
+        delete windowsByWebcontentsId[clipboardWindow.webContents.id]
+        clipboardWindow = null
+    })
+
 }
 
-const unregisterAtLogin = () => {
-    app.setLoginItemSettings({ openAtLogin: false })
+const showOrCreateMainWindow = () => {
+    if (mainWindow) {
+        mainWindow.focus()
+    } else {
+        createMainWindow()
+    }
 }
 
-const createWindow = () => {
+const createMainWindow = () => {
     // Create the browser window.
     mainWindow = new BrowserWindow({
         show: false,
@@ -89,8 +117,11 @@ const createWindow = () => {
         webPreferences: {
             preload: join(__dirname, 'preload.js'),
             devTools: !app.isPackaged,
+            webSecurity: false
         }
-    });
+    })
+
+    windowsByWebcontentsId[mainWindow.webContents.id] = mainWindow
 
     mainWindow.removeMenu()
 
@@ -103,61 +134,29 @@ const createWindow = () => {
     if (!app.isPackaged)
         mainWindow.webContents.openDevTools();
 
-    // Emitted when the window is closed.
-    mainWindow.on('closed', function () {
-        // Dereference the window object, usually you would store windows
-        // in an array if your app supports multi windows, this is the time
-        // when you should delete the corresponding element.
+    mainWindow.on('close', () => {
+        delete windowsByWebcontentsId[mainWindow.webContents.id]
         mainWindow = null
     })
-
-    ipcMain.on("render:readyToShow", () => {
-        mainWindow.show()
-    })
-}
-
-const showOrRecreateMainWindow = () => {
-    if (mainWindow) {
-        mainWindow.focus()
-    } else {
-        createWindow()
-    }
 }
 
 const onReady = () => {
 
-    mainIcon = new Tray(join(__dirname, "../assets/favicon.ico"))
-    mainIcon.addListener("click", () => {
-        showOrRecreateMainWindow()
-    })
-    app.on("second-instance", () => {
-        showOrRecreateMainWindow()
-    })
+    createMainTray(() => showOrCreateMainWindow(), () => app.quit())
 
-    mainIcon.setContextMenu(Menu.buildFromTemplate([
-        {
-            label: 'Show',
-            click: () => {
-                createWindow()
-            }
-        },
-        {
-            label: 'Quit',
-            click: () => {
-                app.quit() // actually quit the app.
-            }
-        },
-    ]))
+    app.on("second-instance", () => {
+        showOrCreateMainWindow()
+    })
 
     // enable media tray icons, then register on setting change
     if (getSettingValue(SettingsItem.enableMediaControls))
-        createTrays()
+        createMediaTrays()
 
     settingsChangeEmitter.on(SettingsItem.enableMediaControls, (value) => {
         if (value)
-            createTrays()
+            createMediaTrays()
         else
-            destroyTrays()
+            destroyMediaTrays()
     })
 
     // enable color picker, then register on setting change
@@ -171,73 +170,26 @@ const onReady = () => {
             unregisterColorPicker()
     })
 
-    if (app.isPackaged) {
-        settingsChangeEmitter.on(SettingsItem.enableRunOnStartup, (value) => {
-            if (value)
-                registerAtLogin()
-            else
-                unregisterAtLogin()
-        })
-    }
-
-
-    ipcMain.handle('cmd:fetchUpdates', async () => {
-
-        const stdout = await handleCommand("winget", ["upgrade", "--include-unknown"])
-        return stdout.substring(stdout.indexOf("Nome"))
-
-    })
-
-    ipcMain.handle('cmd:updatePackage', async (ev, packageName) => {
-        const stdout = await handleCommand("winget", ["upgrade", packageName])
-        return stdout
-
-    })
-
-    ipcMain.handle('settings:getSettingValue', (ev, setting) => {
-        return getSettingValue(setting)
-    })
-
-    ipcMain.handle('settings:setSettingValue', (ev, setting, value) => {
-        return setSettingValue(setting, value)
-    })
-
-    ipcMain.handle('fs:appGetPath', async (ev, name) => {
-        return app.getPath(name)
-    })
-
-
-    ipcMain.handle('fs:calculateFolderSize', async (ev, path) => {
-        try {
-            return dirSize(path) / 1_000_000
-        } catch (e) {
-            console.log(e)
-            return 0
+    globalShortcut.register("super+control+b", () => {
+        if (!clipboardWindow) {
+            createClipboardWindow()
         }
     })
 
-    ipcMain.handle('fs:getEnvironmentVariable', async (ev, variable) => {
-        return process.env[variable]
+    initMessageHandlers()
+
+    ipcMain.on("clipboard:paste", (ev, text) => {
+        ignoreSingleCopy = true
+        clipboard.writeText(text)
     })
 
-
-    ipcMain.handle('fs:deleteFolder', async (ev, folderPath) => {
-        const content = await fp.readdir(folderPath)
-        const promises = content.map(async file => {
-            await fp.rm(path.join(folderPath, file), { recursive: true })
-        })
-        await Promise.all(promises)
+    ipcMain.on("render:readyToShow", (ev) => {
+        const window = windowsByWebcontentsId[ev.sender.id]
+        window.show()
     })
 
-    ipcMain.handle('wifi:retrieveConnectionDetails', async (ev) => {
-        const ssid = await getWifiSSID()
-        const password = await getWifiPassword(ssid)
-
-        return { ssid, password }
-    })
-
-    if (!process.argv.includes(atLoginFlag))
-        createWindow()
+    // if (!process.argv.includes(atLoginFlag))
+    createMainWindow()
 }
 
 module.exports = onReady
