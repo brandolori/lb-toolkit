@@ -18,8 +18,8 @@ const settings: Setting[] = [
         name: "Enable tray media controls"
     },
     {
-        key: SettingsItems.enableRunOnStartup,
-        name: "Enable run on startup"
+        key: SettingsItems.enableRunOnLogin,
+        name: "Enable run on login"
     },
     {
         key: SettingsItems.enableClipboardSync,
