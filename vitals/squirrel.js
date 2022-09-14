@@ -1,5 +1,7 @@
 const path = require('path');
+const SettingsItems = require('../src/SettingsItems');
 const { unregisterAtLogin, registerAtLogin } = require('./login');
+const { setSettingValue } = require('./settings');
 const spawn = require('child_process').spawn;
 const app = require('electron').app;
 
@@ -18,6 +20,7 @@ const isSquirrel = () => {
         if (cmd === '--squirrel-install' || cmd === '--squirrel-updated') {
             run(['--createShortcut=' + target + ''], app.quit);
             registerAtLogin()
+            setSettingValue(SettingsItems.enableRunOnLogin, true)
             return true;
         }
         if (cmd === '--squirrel-uninstall') {
