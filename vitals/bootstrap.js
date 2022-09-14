@@ -1,8 +1,7 @@
 const { join } = require('path');
 const robot = require("robotjs");
 const { getSettingValue, settingsChangeEmitter } = require("./settings");
-const { globalShortcut, clipboard, BrowserWindow, app, ipcMain, nativeTheme } = require("electron");
-const clipboardListener = require('clipboard-event');
+const { globalShortcut, clipboard, BrowserWindow, app, ipcMain, nativeTheme, screen } = require("electron");
 const { v4: uuidv4 } = require('uuid');
 const { getTableClient, startClipboardListener, stopClipboardListener } = require("./clipboard");
 const { isLogin, registerAtLogin, unregisterAtLogin } = require("./login");
@@ -79,6 +78,9 @@ const unregisterColorPicker = () => {
 }
 
 const createClipboardWindow = () => {
+
+    const cursorPoint = screen.dipToScreenPoint(screen.getCursorScreenPoint())
+
     clipboardWindow = new BrowserWindow({
         show: false,
         skipTaskbar: true,
@@ -87,6 +89,8 @@ const createClipboardWindow = () => {
         resizable: false,
         backgroundColor: nativeTheme.shouldUseDarkColors ? "#1a1b1e" : undefined,
         titleBarStyle: "hidden",
+        x: cursorPoint.x,
+        y: cursorPoint.y,
         webPreferences: {
             preload: join(__dirname, 'preload.js'),
             devTools: !app.isPackaged,

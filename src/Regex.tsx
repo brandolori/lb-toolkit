@@ -1,4 +1,4 @@
-import { Paper, Stack, Textarea, TextInput, Text, Card, Highlight, Mark, Code } from "@mantine/core"
+import { Stack, Textarea, TextInput, Text, Card, Mark } from "@mantine/core"
 import { useEffect, useState } from "react"
 
 type OutputData = { text: string, highlighted: boolean }
