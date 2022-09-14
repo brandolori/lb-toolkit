@@ -2,21 +2,16 @@ const { app } = require('electron');
 const fs = require('fs');
 const path = require("path");
 const { EventEmitter } = require('stream');
-
-const SettingsItem = {
-    enableColorPicker: "enableColorPicker",
-    enableMediaControls: "enableMediaControls",
-    azureStorageAccount: "azureStorageAccount",
-    azureSASToken: "azureSASToken",
-    azureTableName: "azureTableName"
-}
+const SettingsItems = require("../src/SettingsItems")
 
 const DefaultValues = {
-    [SettingsItem.enableColorPicker]: true,
-    [SettingsItem.enableMediaControls]: true,
-    [SettingsItem.azureStorageAccount]: "",
-    [SettingsItem.azureSASToken]: "",
-    [SettingsItem.azureTableName]: "",
+    [SettingsItems.enableColorPicker]: true,
+    [SettingsItems.enableMediaControls]: true,
+    [SettingsItems.enableRunOnLogin]: true,
+    [SettingsItems.enableClipboardSync]: false,
+    [SettingsItems.azureStorageAccount]: "",
+    [SettingsItems.azureSASToken]: "",
+    [SettingsItems.azureTableName]: "",
 }
 
 const settingsFileName = "settings.json"
@@ -43,4 +38,4 @@ const setSettingValue = (setting, value) => {
     settingsChangeEmitter.emit(setting, value)
 }
 
-module.exports = { getSettingValue, setSettingValue, settingsChangeEmitter, SettingsItem }
+module.exports = { getSettingValue, setSettingValue, settingsChangeEmitter }

@@ -1,9 +1,9 @@
-import { ActionIcon, AppShell, Button, Container, Group, Header, Loader, Navbar, Stack, Text } from '@mantine/core';
-import React, { useEffect, useState } from 'react';
+import { AppShell, Container, Header, Text } from '@mantine/core';
+import { useEffect, useState } from 'react';
 import Navigation, { Route } from './Navigation';
 import Updater from './Updater';
 import Cleaner from './Cleaner';
-import Main from './Main';
+import Home from './Home';
 import Regex from './Regex';
 import Wifi from './Wifi';
 import Uppercase from './Uppercase';
@@ -37,7 +37,7 @@ const App = () => {
         <Container>
 
             {route == "home" &&
-                <Main />}
+                <Home />}
             {route == "updater" &&
                 <Updater />}
             {route == "cleaner" &&

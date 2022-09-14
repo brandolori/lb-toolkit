@@ -1,36 +1,59 @@
 const { join } = require('path');
 const robot = require("robotjs");
-const { getSettingValue, settingsChangeEmitter, SettingsItem } = require("./settings");
+const { getSettingValue, settingsChangeEmitter } = require("./settings");
 const { globalShortcut, clipboard, BrowserWindow, app, ipcMain, nativeTheme } = require("electron");
 const clipboardListener = require('clipboard-event');
 const { v4: uuidv4 } = require('uuid');
-const tableClient = require("./clipboard");
+const { getTableClient, startClipboardListener, stopClipboardListener } = require("./clipboard");
+const { isLogin, registerAtLogin, unregisterAtLogin } = require("./login");
 const initMessageHandlers = require('./initMessageHandlers');
 const { createMediaTrays, destroyMediaTrays, createMainTray } = require('./trays');
+const SettingsItems = require('../src/SettingsItems');
 
 let ignoreSingleCopy = false
 
-clipboardListener.startListening();
+const startListeningToClipboard = () => {
 
-clipboardListener.on('change', async () => {
-    if (clipboard.availableFormats().includes("text/plain")) {
-        if (ignoreSingleCopy) {
-            ignoreSingleCopy = false
-            return
+    const tableClient = getTableClient()
+
+    startClipboardListener(async () => {
+        if (clipboard.availableFormats().includes("text/plain")) {
+            if (ignoreSingleCopy) {
+                ignoreSingleCopy = false
+                return
+            }
+
+            const text = clipboard.readText()
+
+            if (text.replace("\r", "").replace(" ", "").replace("\n", "").length > 0) {
+                await tableClient.createEntity({
+                    partitionKey: "pc",
+                    rowKey: uuidv4(),
+                    text: clipboard.readText()
+                })
+                mainWindow?.webContents.send('clipboard:change')
+            }
         }
+    });
 
-        const text = clipboard.readText()
+}
 
-        if (text.replace("\r", "").replace(" ", "").replace("\n", "").length > 0) {
-            await tableClient.createEntity({
-                partitionKey: "pc",
-                rowKey: uuidv4(),
-                text: clipboard.readText()
-            })
-            mainWindow?.webContents.send('clipboard:change')
-        }
-    }
-});
+const stopListeningToClibpoard = () => {
+    stopClipboardListener()
+}
+
+// enable clipboard listener, then register to settings change
+if (getSettingValue(SettingsItems.enableClipboardSync))
+    startListeningToClipboard()
+
+settingsChangeEmitter.on(SettingsItems.enableClipboardSync, (value) => {
+    if (value)
+        startListeningToClipboard()
+    else
+        stopListeningToClibpoard()
+})
+
+
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -142,6 +165,15 @@ const createMainWindow = () => {
 
 const onReady = () => {
 
+    if (app.isPackaged) {
+        settingsChangeEmitter.on(SettingsItems.enableRunOnLogin, (value) => {
+            if (value)
+                registerAtLogin()
+            else
+                unregisterAtLogin()
+        })
+    }
+
     createMainTray(() => showOrCreateMainWindow(), () => app.quit())
 
     app.on("second-instance", () => {
@@ -149,10 +181,10 @@ const onReady = () => {
     })
 
     // enable media tray icons, then register on setting change
-    if (getSettingValue(SettingsItem.enableMediaControls))
+    if (getSettingValue(SettingsItems.enableMediaControls))
         createMediaTrays()
 
-    settingsChangeEmitter.on(SettingsItem.enableMediaControls, (value) => {
+    settingsChangeEmitter.on(SettingsItems.enableMediaControls, (value) => {
         if (value)
             createMediaTrays()
         else
@@ -160,10 +192,10 @@ const onReady = () => {
     })
 
     // enable color picker, then register on setting change
-    if (getSettingValue(SettingsItem.enableColorPicker))
+    if (getSettingValue(SettingsItems.enableColorPicker))
         registerColorPicker()
 
-    settingsChangeEmitter.on(SettingsItem.enableColorPicker, (value) => {
+    settingsChangeEmitter.on(SettingsItems.enableColorPicker, (value) => {
         if (value)
             registerColorPicker()
         else
@@ -188,8 +220,9 @@ const onReady = () => {
         window.show()
     })
 
-    // if (!process.argv.includes(atLoginFlag))
-    createMainWindow()
+    if (!isLogin())
+        createMainWindow()
+
 }
 
 module.exports = onReady

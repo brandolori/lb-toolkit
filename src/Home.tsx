@@ -1,30 +1,29 @@
-import { ActionIcon, Button, Group, Stack, Switch, Text } from "@mantine/core"
+import { Stack, Switch, Text } from "@mantine/core"
 import { useEffect, useState } from "react"
+import SettingsItems from "./SettingsItems"
 
 type Setting = {
     name: string
     key: string,
 }
 
-const SettingsItem = {
-    enableColorPicker: "enableColorPicker",
-    enableMediaControls: "enableMediaControls",
-    enableRunOnStartup: "enableRunOnStartup"
-}
-
 const settings: Setting[] = [
     {
-        key: SettingsItem.enableColorPicker,
+        key: SettingsItems.enableColorPicker,
         name: "Enable color picker"
     },
     {
-        key: SettingsItem.enableMediaControls,
+        key: SettingsItems.enableMediaControls,
         name: "Enable tray media controls"
     },
-    // {
-    //     key: SettingsItem.enableRunOnStartup,
-    //     name: "Enable run on startup"
-    // }
+    {
+        key: SettingsItems.enableRunOnStartup,
+        name: "Enable run on startup"
+    },
+    {
+        key: SettingsItems.enableClipboardSync,
+        name: "Enable clipboard Sync"
+    }
 ]
 
 const defaultState: SettingState[] = settings.map(el => ({
@@ -49,7 +48,9 @@ export default () => {
     }
 
     const changeSetting = async (setting: string, value: boolean) => {
-        await window["electronAPI"].setSettingValue(setting, value)
+        try {
+            await window["electronAPI"].setSettingValue(setting, value)
+        } catch (e) { }
         await loadSetting(setting)
     }
 

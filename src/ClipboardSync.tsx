@@ -1,7 +1,8 @@
 import { AzureSASCredential, TableClient } from "@azure/data-tables";
-import { ActionIcon, Button, Card, Group, Space, Stack, Text } from "@mantine/core";
+import { ActionIcon, Alert, Button, Card, Group, Space, Stack, Text } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { AiOutlineReload } from "react-icons/ai";
+import { AiOutlineReload, AiOutlineWarning } from "react-icons/ai";
+import SettingsItems from "./SettingsItems";
 
 const account = "lbtoolkitkeyboard";
 const SASToken = "?sv=2021-06-08&ss=t&srt=sco&sp=rwdlacu&se=2052-09-12T15:48:19Z&st=2022-09-12T07:48:19Z&spr=https&sig=OK5t7De%2B9ElUfVtxC%2BBq0OiZasMbz%2BIbgnidHMBRDYY%3D";
@@ -38,6 +39,7 @@ type Clip = {
 export default () => {
     const [clips, setClips] = useState<Clip[]>([])
     const [loading, setLoading] = useState(false)
+    const [syncEnabled, setSyncEnabled] = useState(true)
 
     const updateClips = async () => {
         setLoading(true)
@@ -49,9 +51,16 @@ export default () => {
     useEffect(() => {
         updateClips()
         window["electronAPI"].handleClipboardChange(() => updateClips())
+        window["electronAPI"].getSettingValue(SettingsItems.enableClipboardSync)
+            .then(value => setSyncEnabled(value))
     }, [])
 
     return <Stack>
+        {!syncEnabled &&
+            <Alert icon={<AiOutlineWarning size={16} />} title="Warning" >
+                Clipboard sync is currently disabled. Enable it from the Home tab.
+            </Alert>
+        }
         <Group>
             <Text>
                 Showing the latest {clips.length} clips

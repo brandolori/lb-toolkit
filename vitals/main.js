@@ -1,12 +1,13 @@
 "use strict"
 
 const { app } = require('electron');
+const { isSquirrel } = require('./squirrel');
 // Module to create native browser window.
 
 let canLoad = true
 
 // this package checks if we are in install mode and executes the install scripts
-if (require('./squirrel')) {
+if (isSquirrel()) {
     canLoad = false
     app.quit()
 }
