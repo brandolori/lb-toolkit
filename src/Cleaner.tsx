@@ -1,6 +1,7 @@
 import { ActionIcon, Button, Group, Stack, Text } from "@mantine/core"
 import { useEffect, useState } from "react"
 import { AiOutlineFolderOpen, AiOutlineReload } from "react-icons/ai"
+import { substitutePath } from "./utils"
 
 const folders: { name: string, path: string }[] = [
     {
@@ -13,29 +14,6 @@ const folders: { name: string, path: string }[] = [
     },
 ]
 
-const substitute = async (path: string) => {
-
-    let mutatedPath = path
-
-    const envRegex = /%[A-Z]+%/g
-    const envPromises = path.match(envRegex)?.map(async (subString) => {
-        const envVarName = subString.replaceAll("%", "")
-        const envVarValue = await window["electronAPI"].getEnvironmentVariable(envVarName)
-        mutatedPath = mutatedPath.replace(subString, envVarValue)
-    }) ?? [Promise.resolve()]
-    await Promise.all(envPromises)
-
-    const appPathRegex = /<[a-z]+>/g
-    const appPathPromises = mutatedPath.match(appPathRegex)?.map(async (subString) => {
-        const appPathName = subString.replace("<", "").replace(">", "")
-        const appPathValue = await window["electronAPI"].appGetPath(appPathName)
-        mutatedPath = mutatedPath.replace(subString, appPathValue)
-    }) ?? [Promise.resolve()]
-    await Promise.all(appPathPromises)
-
-    return mutatedPath
-}
-
 export default () => {
 
     const [sizes, setSizes] = useState<{ path: string, size: number }[]>([])
@@ -44,7 +22,7 @@ export default () => {
 
     const calculateSize = async (path: string): Promise<number> => {
 
-        const substitutedPath = await substitute(path)
+        const substitutedPath = await substitutePath(path)
 
         return await window["electronAPI"].calculateFolderSize(substitutedPath)
     }
@@ -61,13 +39,13 @@ export default () => {
     }
 
     const deleteFolder = async (path: string) => {
-        const substitutedPath = await substitute(path)
+        const substitutedPath = await substitutePath(path)
         await window["electronAPI"].deleteFolder(substitutedPath)
         calculateAllSizes()
     }
 
     const showFolder = async (path: string) => {
-        const substitutedPath = await substitute(path)
+        const substitutedPath = await substitutePath(path)
         window["electronAPI"].openFolder(substitutedPath)
     }
 

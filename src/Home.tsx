@@ -1,6 +1,7 @@
-import { Stack, Switch, Text } from "@mantine/core"
+import { Button, Group, Stack, Switch, Text } from "@mantine/core"
 import { useEffect, useState } from "react"
 import SettingsItems from "./SettingsItems"
+import { substitutePath } from "./utils"
 
 type Setting = {
     name: string
@@ -34,6 +35,12 @@ const defaultState: SettingState[] = settings.map(el => ({
 type SettingState = {
     key: string,
     value: boolean
+}
+
+const openSettingsFile = async () => {
+    const path = "<userData>\\settings.json"
+    const substitutedPath = await substitutePath(path)
+    window["electronAPI"].openFolder(substitutedPath)
 }
 
 export default () => {
@@ -70,5 +77,8 @@ export default () => {
                 key={el.key}
                 label={el.name} />
         )}
+        <Group>
+            <Button onClick={() => openSettingsFile()}>Open settings file</Button>
+        </Group>
     </Stack >
 }
