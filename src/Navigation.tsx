@@ -1,6 +1,6 @@
 import { Navbar, NavLink } from "@mantine/core";
 
-export type Route = "updater" | "home" | "cleaner" | "regex" | "wifi" | "uppercase" | "clipboard"
+export type Route = "updater" | "home" | "cleaner" | "regex" | "wifi" | "uppercase" | "clipboard" | "system"
 
 type RouteNavProps = {
     currentRoute: Route;
@@ -53,4 +53,9 @@ export default ({ route, onChangeRoute }:
             label="✂️ Clipboard"
             onChangeRoute={onChangeRoute}
             routeName="clipboard" />
+        <RouteNav
+            currentRoute={route}
+            label="📀 System Settings"
+            onChangeRoute={onChangeRoute}
+            routeName="system" />
     </Navbar>

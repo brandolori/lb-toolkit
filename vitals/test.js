@@ -1,12 +1,9 @@
-const wifiPassword = require("./getWifiPassword");
+const { getHypervisor, setHypervisor } = require("./hypervisor")
 
-const wifiSSID = require("./getWifiSSID");
+setHypervisor(true)
+    .then(e => console.log("Successo"))
+    .catch(e => console.log("Fallimento: ", e))
 
-// (async () => {
-//     try {
-//         const ssid = await wifiSSID()
-//         console.log(ssid)
-//         const pwd = await wifiPassword(ssid)
-//         console.log(ssid)
-//     } catch (e) { console.log(e) }
-// })()
+getHypervisor()
+    .then(e => console.log("Successo:", e))
+    .catch(e => console.log("Fallimento: ", e))

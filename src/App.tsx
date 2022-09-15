@@ -8,6 +8,7 @@ import Regex from './Regex';
 import Wifi from './Wifi';
 import Uppercase from './Uppercase';
 import ClipboardSync from './ClipboardSync';
+import System from './System';
 
 const titleBarHeight = 41
 //window.navigator["windowControlsOverlay"].getTitlebarAreaRect().height
@@ -50,6 +51,8 @@ const App = () => {
                 <Uppercase />}
             {route == "clipboard" &&
                 <ClipboardSync />}
+            {route == "system" &&
+                <System />}
         </Container>
 
     </AppShell>

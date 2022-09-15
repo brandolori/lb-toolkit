@@ -2,12 +2,13 @@ const { ipcMain, app, shell } = require("electron")
 const path = require("path")
 const getWifiPassword = require("./getWifiPassword")
 const getWifiSSID = require("./getWifiSSID")
+const { getHypervisor, setHypervisor } = require("./hypervisor")
 const { getSettingValue, setSettingValue } = require("./settings")
 const { handleCommand, dirSize } = require("./utils")
 const fp = require('fs').promises
 
 module.exports = () => {
-
+    let state = true
     ipcMain.handle('cmd:fetchUpdates', async () => {
 
         const stdout = await handleCommand("winget", ["upgrade", "--include-unknown"])
@@ -19,6 +20,14 @@ module.exports = () => {
         const stdout = await handleCommand("winget", ["upgrade", packageName])
         return stdout
 
+    })
+
+    ipcMain.handle('cmd:retrieveHypervisorState', async () => {
+        return await getHypervisor()
+    })
+
+    ipcMain.handle('cmd:executeHypervisorCommand', async (ev, value) => {
+        return await setHypervisor(value)
     })
 
     ipcMain.handle('settings:getSettingValue', (ev, setting) => {

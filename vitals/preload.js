@@ -11,6 +11,8 @@ const { contextBridge, ipcRenderer } = require('electron')
 contextBridge.exposeInMainWorld('electronAPI', {
     fetchUpdates: () => ipcRenderer.invoke('cmd:fetchUpdates'),
     updatePackage: (packageName) => ipcRenderer.invoke('cmd:updatePackage', packageName),
+    retrieveHypervisorState: () => ipcRenderer.invoke('cmd:retrieveHypervisorState'),
+    executeHypervisorCommand: (state) => ipcRenderer.invoke('cmd:executeHypervisorCommand', state),
 
     calculateFolderSize: (path) => ipcRenderer.invoke("fs:calculateFolderSize", path),
     getEnvironmentVariable: (variable) => ipcRenderer.invoke("fs:getEnvironmentVariable", variable),

@@ -26,7 +26,6 @@ const handleCommand = (command, args) => new Promise((res, rej) => {
         const finalStdout = buffer.join("")
         res(finalStdout)
     })
-
 })
 
 module.exports = { dirSize, handleCommand }
