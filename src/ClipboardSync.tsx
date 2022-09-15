@@ -1,8 +1,10 @@
-import { AzureSASCredential, TableClient } from "@azure/data-tables";
-import { ActionIcon, Alert, Button, Card, Group, Space, Stack, Text } from "@mantine/core";
+import { AzureSASCredential, TableClient, odata } from "@azure/data-tables";
+import { ActionIcon, Alert, Button, Card, Group, NativeSelect, Space, Stack, Text } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { AiOutlineReload, AiOutlineWarning } from "react-icons/ai";
 import SettingsItems from "./SettingsItems";
+
+type DateFilter = "today" | "this week" | "this month" | "all"
 
 const getTableClient = async () => {
     const account: string = await window["electronAPI"].getSettingValue(SettingsItems.azureStorageAccount)
@@ -15,11 +17,18 @@ const getTableClient = async () => {
     )
 }
 
-
-const fetchClips = async () => {
+const fetchClips = async (filter: DateFilter) => {
     const data: Clip[] = []
     const tableClient = await getTableClient()
-    for await (const entity of tableClient.listEntities()) {
+    const days = filter == "today" ? 1 :
+        filter == "this week" ? 7 :
+            filter == "this month" ? 30 : 100000
+    const filterDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000) // 1 days ago
+    for await (const entity of tableClient.listEntities({
+        queryOptions: {
+            filter: odata`Timestamp ge ${filterDate}`,
+        }
+    })) {
         data.push({
             date: entity.timestamp,
             id: entity.rowKey,
@@ -43,11 +52,12 @@ type Clip = {
 export default () => {
     const [clips, setClips] = useState<Clip[]>([])
     const [loading, setLoading] = useState(false)
-    const [syncEnabled, setSyncEnabled] = useState(true)
+    const [showSyncAlert, setSyncEnabled] = useState(false)
+    const [dateFilter, setDateFilter] = useState<DateFilter>("today")
 
     const updateClips = async () => {
         setLoading(true)
-        const data = await fetchClips()
+        const data = await fetchClips(dateFilter)
         setClips(data)
         setLoading(false)
     }
@@ -56,19 +66,24 @@ export default () => {
         updateClips()
         window["electronAPI"].handleClipboardChange(() => updateClips())
         window["electronAPI"].getSettingValue(SettingsItems.enableClipboardSync)
-            .then(value => setSyncEnabled(value))
-    }, [])
+            .then(value => setSyncEnabled(!value))
+    }, [dateFilter])
 
     return <Stack>
-        {!syncEnabled &&
+        {showSyncAlert &&
             <Alert icon={<AiOutlineWarning size={16} />} title="Warning" >
                 Clipboard sync is currently disabled. Enable it from the Home tab.
             </Alert>
         }
         <Group>
-            <Text>
-                Showing the latest {clips.length} clips
+            <Text size="sm">
+                Last {clips.length} clips from
             </Text>
+            <NativeSelect
+                size="sm"
+                data={["today", "this week", "this month", "all"]}
+                onChange={(ev) => setDateFilter(ev.target.value as DateFilter)}
+            />
             <ActionIcon loading={loading} onClick={() => updateClips()}>
                 <AiOutlineReload />
             </ActionIcon>
