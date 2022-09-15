@@ -33,7 +33,6 @@
     ]
   },
   "devDependencies": {
-    "@emotion/react": "^11.10.4",
     "@mantine/core": "^5.2.4",
     "@mantine/hooks": "^5.2.4",
     "@types/node": "^16.11.54",

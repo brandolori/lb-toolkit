@@ -1,4 +1,4 @@
-const { ipcMain, app } = require("electron")
+const { ipcMain, app, shell } = require("electron")
 const path = require("path")
 const getWifiPassword = require("./getWifiPassword")
 const getWifiSSID = require("./getWifiSSID")
@@ -54,6 +54,10 @@ module.exports = () => {
             await fp.rm(path.join(folderPath, file), { recursive: true })
         })
         await Promise.all(promises)
+    })
+
+    ipcMain.on("fs:openFolder", (ev, path) => {
+        shell.showItemInFolder(path)
     })
 
     ipcMain.handle('wifi:retrieveConnectionDetails', async () => {

@@ -1,5 +1,5 @@
 "use strict"
-const { contextBridge, ipcRenderer, shell } = require('electron')
+const { contextBridge, ipcRenderer } = require('electron')
 
 // https://www.electronjs.org/docs/latest/tutorial/process-model
 // https://www.electronjs.org/docs/latest/tutorial/sandbox
@@ -15,10 +15,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getEnvironmentVariable: (variable) => ipcRenderer.invoke("fs:getEnvironmentVariable", variable),
     appGetPath: (name) => ipcRenderer.invoke("fs:appGetPath", name),
     deleteFolder: (path) => ipcRenderer.invoke("fs:deleteFolder", path),
-    openFolder: (path) => {
-        console.log("trying to open", path)
-        shell.showItemInFolder(path)
-    },
+    openFolder: (path) => ipcRenderer.send("fs:openFolder", path),
     getSettingValue: (setting) => ipcRenderer.invoke("settings:getSettingValue", setting),
     setSettingValue: (setting, value) => ipcRenderer.invoke("settings:setSettingValue", setting, value),
     readyToShow: () => ipcRenderer.send('render:readyToShow'),
