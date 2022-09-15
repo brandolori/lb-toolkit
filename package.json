@@ -34,7 +34,6 @@
   },
   "devDependencies": {
     "@mantine/core": "^5.2.4",
-    "@mantine/hooks": "^5.2.4",
     "@types/node": "^16.11.54",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
