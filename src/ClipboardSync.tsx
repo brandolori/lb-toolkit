@@ -1,44 +1,9 @@
-import { AzureSASCredential, TableClient, odata } from "@azure/data-tables";
 import { ActionIcon, Alert, Button, Card, Group, NativeSelect, Space, Stack, Text } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { AiOutlineReload, AiOutlineWarning } from "react-icons/ai";
 import SettingsItems from "./SettingsItems";
 
 type DateFilter = "today" | "this week" | "this month" | "all"
-
-const getTableClient = async () => {
-    const account: string = await window["electronAPI"].getSettingValue(SettingsItems.azureStorageAccount)
-    const SASToken: string = await window["electronAPI"].getSettingValue(SettingsItems.azureSASToken)
-    const tableName: string = await window["electronAPI"].getSettingValue(SettingsItems.azureTableName)
-    return new TableClient(
-        `https://${account}.table.core.windows.net`,
-        tableName,
-        new AzureSASCredential(SASToken)
-    )
-}
-
-const fetchClips = async (filter: DateFilter) => {
-    const data: Clip[] = []
-    const tableClient = await getTableClient()
-    const days = filter == "today" ? 1 :
-        filter == "this week" ? 7 :
-            filter == "this month" ? 30 : 100000
-    const filterDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000) // 1 days ago
-    for await (const entity of tableClient.listEntities({
-        queryOptions: {
-            filter: odata`Timestamp ge ${filterDate}`,
-        }
-    })) {
-        data.push({
-            date: entity.timestamp,
-            id: entity.rowKey,
-            source: entity.partitionKey as ClipSource,
-            text: entity.text as string
-        })
-    }
-
-    return data.sort((a, b) => a.date > b.date ? -1 : 1)
-}
 
 type ClipSource = "pc" | "phone"
 
@@ -57,7 +22,7 @@ export default () => {
 
     const updateClips = async () => {
         setLoading(true)
-        const data = await fetchClips(dateFilter)
+        const data = await window["electronAPI"].fetchClips(dateFilter)
         setClips(data)
         setLoading(false)
     }
