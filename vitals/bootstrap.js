@@ -78,7 +78,7 @@ const unregisterColorPicker = () => {
 
 const createClipboardWindow = () => {
 
-    const cursorPoint = screen.dipToScreenPoint(screen.getCursorScreenPoint())
+    const cursorPoint = screen.getCursorScreenPoint()
 
     clipboardWindow = new BrowserWindow({
         show: false,
