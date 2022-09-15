@@ -58,16 +58,10 @@ export default () => {
             </Alert>}
         <div style={{ position: "relative", width: "fit-content", height: "fit-content" }}>
             <LoadingOverlay visible={loading || error} overlayBlur={2} />
-
-            <Image
-                style={{ pointerEvents: "none" }}
-                width={200} height={200}
-                radius="sm"
-                src={qr}
-                withPlaceholder
-                alt="Random unsplash image"
-                caption="Scan to connect"
-            />
+            <img
+                style={{ borderRadius: 4 }}
+                width={200} height={200} src={qr} alt="" />
+                <Image></Image>
         </div>
         <Space h="md" />
         <Group>

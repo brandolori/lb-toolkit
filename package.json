@@ -1,6 +1,6 @@
 {
   "name": "lb-toolkit",
-  "version": "0.14.2",
+  "version": "0.14.3",
   "private": true,
   "homepage": "./",
   "main": "vitals/main.js",
@@ -10,7 +10,7 @@
     "name": "Lorenzo Bartolini"
   },
   "scripts": {
-    "react-start": "react-app-rewired start",
+    "react-start": "react-scripts start",
     "elect-start": "electron .",
     "react-build": "react-app-rewired build",
     "elect-package": "electron-packager . --overwrite --ignore=\\installer --ignore=\\public --icon=assets\\favicon.ico",
