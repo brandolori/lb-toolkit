@@ -2,7 +2,6 @@ const { join } = require('path');
 const robot = require("robotjs");
 const { getSettingValue, settingsChangeEmitter } = require("./settings");
 const { globalShortcut, clipboard, BrowserWindow, app, ipcMain, nativeTheme, screen } = require("electron");
-const { v4: uuidv4 } = require('uuid');
 const { getTableClient, startClipboardListener, stopClipboardListener } = require("./clipboard");
 const { isLogin, registerAtLogin, unregisterAtLogin } = require("./login");
 const initMessageHandlers = require('./initMessageHandlers');
@@ -27,7 +26,7 @@ const startListeningToClipboard = () => {
             if (text.replace("\r", "").replace(" ", "").replace("\n", "").length > 0) {
                 await tableClient.createEntity({
                     partitionKey: "pc",
-                    rowKey: uuidv4(),
+                    rowKey: Date.now().toString(),
                     text: clipboard.readText()
                 })
                 mainWindow?.webContents.send('clipboard:change')
