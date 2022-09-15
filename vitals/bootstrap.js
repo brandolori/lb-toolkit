@@ -144,7 +144,8 @@ const createMainWindow = () => {
         webPreferences: {
             preload: join(__dirname, 'preload.js'),
             devTools: !app.isPackaged,
-            webSecurity: false
+            webSecurity: false,
+            sandbox: true,
         }
     })
 

@@ -1,6 +1,13 @@
 "use strict"
 const { contextBridge, ipcRenderer, shell } = require('electron')
 
+// https://www.electronjs.org/docs/latest/tutorial/process-model
+// https://www.electronjs.org/docs/latest/tutorial/sandbox
+// while sandboxing, we only have access to limited apis,
+// and no general-purpose require()
+
+// require("./test")
+
 contextBridge.exposeInMainWorld('electronAPI', {
     fetchUpdates: () => ipcRenderer.invoke('cmd:fetchUpdates'),
     updatePackage: (packageName) => ipcRenderer.invoke('cmd:updatePackage', packageName),
