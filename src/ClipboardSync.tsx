@@ -4,17 +4,21 @@ import { useEffect, useState } from "react";
 import { AiOutlineReload, AiOutlineWarning } from "react-icons/ai";
 import SettingsItems from "./SettingsItems";
 
-const account = "lbtoolkitkeyboard";
-const SASToken = "?sv=2021-06-08&ss=t&srt=sco&sp=rwdlacu&se=2052-09-12T15:48:19Z&st=2022-09-12T07:48:19Z&spr=https&sig=OK5t7De%2B9ElUfVtxC%2BBq0OiZasMbz%2BIbgnidHMBRDYY%3D";
-const tableName = "cpliboard"
-const tableClient = new TableClient(
-    `https://${account}.table.core.windows.net`,
-    tableName,
-    new AzureSASCredential(SASToken)
-);
+const getTableClient = async () => {
+    const account: string = await window["electronAPI"].getSettingValue(SettingsItems.azureStorageAccount)
+    const SASToken: string = await window["electronAPI"].getSettingValue(SettingsItems.azureSASToken)
+    const tableName: string = await window["electronAPI"].getSettingValue(SettingsItems.azureTableName)
+    return new TableClient(
+        `https://${account}.table.core.windows.net`,
+        tableName,
+        new AzureSASCredential(SASToken)
+    )
+}
+
 
 const fetchClips = async () => {
     const data: Clip[] = []
+    const tableClient = await getTableClient()
     for await (const entity of tableClient.listEntities()) {
         data.push({
             date: entity.timestamp,
