@@ -1,8 +1,7 @@
 import { ActionIcon, Group, Stack, Text, Image, Space, LoadingOverlay, Alert } from "@mantine/core"
 import { useEffect, useState } from "react"
 import { AiOutlineCopy, AiOutlineReload, AiOutlineWarning } from "react-icons/ai"
-
-const qrcode = require('wifi-qr-code-generator')
+import { generateWifiQRCode } from 'wifi-qr-code-generator'
 
 const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
@@ -35,7 +34,7 @@ export default () => {
     }, [])
 
     useEffect(() => {
-        const pr = qrcode.generateWifiQRCode({
+        const pr = generateWifiQRCode({
             ssid: ssid,
             password: password,
             encryption: 'WPA',
