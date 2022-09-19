@@ -19,7 +19,7 @@ export default () => {
 
     const updateHypervisorState = async () => {
         setHypervisorLoading(true)
-        const state = await window["electronAPI"].currentRefreshRate()
+        const state = await window["electronAPI"].retrieveHypervisorState()
         setHypervisorState(state)
         setHypervisorLoading(false)
     }
