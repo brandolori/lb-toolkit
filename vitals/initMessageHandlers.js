@@ -84,7 +84,7 @@ module.exports = () => {
 
     ipcMain.handle('display:listRefreshRates', async () => {
         const stdout = await handleCommand(`${__dirname}\\bin\\refreshtool\\refreshtool.exe`, ["list"])
-        return stdout.split("\r\n")
+        return stdout.split("\r\n").filter(el => el != "")
     })
 
     ipcMain.handle('display:setRefreshRate', async (ev, value) => {
