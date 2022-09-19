@@ -221,6 +221,10 @@ const onReady = () => {
         clipboard.writeText(text)
     })
 
+    // make sure window are shown when React has rendered
+    // how it works: every window has a webcontents id,
+    // the same webcontents id is in every event emitted by the window
+    // so we show the window by finding it in a dictionary
     ipcMain.on("render:readyToShow", (ev) => {
         const window = windowsByWebcontentsId[ev.sender.id]
         window.show()
