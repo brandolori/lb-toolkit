@@ -67,8 +67,10 @@ const colorPickerKeyCombo = 'super+control+x'
 
 const registerColorPicker = () => {
     globalShortcut.register(colorPickerKeyCombo, () => {
-        const { x, y } = robot.getMousePos()
-        clipboard.writeText(robot.getPixelColor(x, y))
+        try {
+            const { x, y } = robot.getMousePos()
+            clipboard.writeText(robot.getPixelColor(x, y))
+        } catch (e) { }
     })
 }
 
