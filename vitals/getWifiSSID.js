@@ -1,11 +1,12 @@
 'use strict';
 
+const { handleCommand } = require('./utils');
+
 module.exports = async () => {
-	const { execa } = await import('execa');
 	const cmd = 'netsh';
 	const args = ['wlan', 'show', 'interface'];
 
-	const { stdout } = await execa(cmd, args, { encoding: null })
+	const stdout = await handleCommand(cmd, args)
 	let ret;
 
 	//@ts-ignore
