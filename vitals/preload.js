@@ -14,6 +14,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
     retrieveHypervisorState: () => ipcRenderer.invoke('cmd:retrieveHypervisorState'),
     executeHypervisorCommand: (state) => ipcRenderer.invoke('cmd:executeHypervisorCommand', state),
 
+    currentRefreshRate: () => ipcRenderer.invoke('display:currentRefreshRate'),
+    listRefreshRates: () => ipcRenderer.invoke('display:listRefreshRates'),
+    setRefreshRate: (refresh) => ipcRenderer.invoke('display:setRefreshRate', refresh),
+
     calculateFolderSize: (path) => ipcRenderer.invoke("fs:calculateFolderSize", path),
     getEnvironmentVariable: (variable) => ipcRenderer.invoke("fs:getEnvironmentVariable", variable),
     appGetPath: (name) => ipcRenderer.invoke("fs:appGetPath", name),

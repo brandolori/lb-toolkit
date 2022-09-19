@@ -75,4 +75,26 @@ module.exports = () => {
 
         return { ssid, password }
     })
+
+
+    ipcMain.handle('display:currentRefreshRate', async () => {
+        const stdout = await handleCommand("vitals\\bin\\refreshtool\\refreshtool.exe", ["current"])
+        console.log("stdount:", stdout)
+        return stdout.replace("\r\n", "")
+    })
+
+    ipcMain.handle('display:listRefreshRates', async () => {
+        const stdout = await handleCommand("vitals\\bin\\refreshtool\\refreshtool.exe", ["list"])
+        console.log("stdount:", stdout)
+        return stdout.split("\r\n")
+    })
+
+    ipcMain.handle('display:setRefreshRate', async (ev, value) => {
+        const stdout = await handleCommand("vitals\\bin\\refreshtool\\refreshtool.exe", ["change", value])
+        console.log("stdount:", stdout)
+    })
+
+
+
+
 }
