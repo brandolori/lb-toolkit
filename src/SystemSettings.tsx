@@ -26,6 +26,7 @@ export default () => {
 
     const changeHypervisorState = async (state: boolean) => {
         setHypervisorLoading(true)
+        setHypervisorState(state)
         await window["electronAPI"].executeHypervisorCommand(state)
         await updateHypervisorState()
     }
@@ -34,8 +35,8 @@ export default () => {
         updateHypervisorState()
     }, [])
 
-    const [refreshRate, setRefreshRate] = useState(0)
-    const [refreshRateValues, setRefreshRateValues] = useState([0])
+    const [refreshRate, setRefreshRate] = useState("60")
+    const [refreshRateValues, setRefreshRateValues] = useState(["60"])
     const [refreshRateLoading, setRefreshLoading] = useState(true)
 
     const updateRefreshState = async () => {
@@ -80,10 +81,10 @@ export default () => {
                 {el.type == "optionset" &&
                     <>
                         <NativeSelect size="sm" data={el.values} value={el.state} onChange={(ev) => el.onChange(ev.target.value)} />
+                        <Text size="sm">{el.name}</Text>
                         {el.loading &&
                             <Loader size="sm" />
                         }
-                        <Text size="sm">{el.name}</Text>
                     </>}
             </Group>
         )

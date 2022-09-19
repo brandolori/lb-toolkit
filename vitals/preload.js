@@ -28,6 +28,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     setSettingValue: (setting, value) => ipcRenderer.invoke("settings:setSettingValue", setting, value),
 
     readyToShow: () => ipcRenderer.send('render:readyToShow'),
+    appGetVersion: () => ipcRenderer.invoke("app:getVersion"),
 
     retrieveConnectionDetails: () => ipcRenderer.invoke('wifi:retrieveConnectionDetails'),
 

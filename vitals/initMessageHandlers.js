@@ -91,4 +91,9 @@ module.exports = () => {
         const stdout = await handleCommand(`${__dirname}\\bin\\refreshtool\\refreshtool.exe`, ["change", value])
     })
 
+
+    ipcMain.handle('app:getVersion', async () => {
+        return app.getVersion()
+    })
+
 }

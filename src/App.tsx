@@ -35,7 +35,7 @@ const App = () => {
         header={<TitleBar />}
         navbar={<Navigation route={route} onChangeRoute={(route) => setRoute(route)} />}
     >
-        <Container>
+        <Container style={{ height: "100%" }}>
 
             {route == "home" &&
                 <Home />}
