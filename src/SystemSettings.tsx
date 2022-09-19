@@ -63,17 +63,15 @@ export default () => {
     ]
 
     return <Stack >
-        <Text>{settings.length} settings available</Text>
-
         {settings.map(el =>
             <Group key={el.name}>
                 {el.type == "toggle" &&
                     <>
-                        <Text size="sm">{el.name}</Text>
                         <Switch
                             disabled={el.loading}
                             checked={el.state}
                             onChange={(ev) => el.onChange(ev.target.checked)}
+                            label={el.name}
                             key={el.name} />
                         {el.loading &&
                             <Loader size="sm" />
@@ -81,11 +79,11 @@ export default () => {
                     </>}
                 {el.type == "optionset" &&
                     <>
-                        <Text size="sm">{el.name}</Text>
-                        <NativeSelect data={el.values} value={el.state} onChange={(ev) => el.onChange(ev.target.value)} />
+                        <NativeSelect size="sm" data={el.values} value={el.state} onChange={(ev) => el.onChange(ev.target.value)} />
                         {el.loading &&
                             <Loader size="sm" />
                         }
+                        <Text size="sm">{el.name}</Text>
                     </>}
             </Group>
         )
