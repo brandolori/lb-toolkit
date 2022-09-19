@@ -1,7 +1,6 @@
-import { Button, Group, Space, Stack, Switch, Text, Title } from "@mantine/core"
+import { Button, Group, Stack, Switch } from "@mantine/core"
 import { useEffect, useState } from "react"
 import SettingsItems from "./SettingsItems"
-import System from "./SystemSettings"
 import { substitutePath } from "./utils"
 
 type Setting = {

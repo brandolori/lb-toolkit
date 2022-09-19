@@ -8,7 +8,6 @@ import Regex from './Regex';
 import Wifi from './Wifi';
 import Uppercase from './Uppercase';
 import ClipboardSync from './ClipboardSync';
-import System from './SystemSettings';
 
 const titleBarHeight = 41
 //window.navigator["windowControlsOverlay"].getTitlebarAreaRect().height

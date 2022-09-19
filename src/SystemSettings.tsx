@@ -1,6 +1,5 @@
-import { Paper, Stack, Textarea, TextInput, Text, Card, Highlight, Mark, Code, SegmentedControl, Switch, Group, ActionIcon, Loader, NativeSelect } from "@mantine/core"
+import { Stack, Text, Switch, Group, NativeSelect } from "@mantine/core"
 import { useEffect, useState } from "react"
-import { AiOutlineReload } from "react-icons/ai"
 
 type SettingsType = {
     name: string,
@@ -74,17 +73,16 @@ export default () => {
                             onChange={(ev) => el.onChange(ev.target.checked)}
                             label={el.name}
                             key={el.name} />
-                        {el.loading &&
-                            <Loader size="sm" />
-                        }
                     </>}
                 {el.type == "optionset" &&
                     <>
-                        <NativeSelect size="sm" data={el.values} value={el.state} onChange={(ev) => el.onChange(ev.target.value)} />
+                        <NativeSelect
+                            disabled={el.loading}
+                            size="sm"
+                            data={el.values}
+                            value={el.state}
+                            onChange={(ev) => el.onChange(ev.target.value)} />
                         <Text size="sm">{el.name}</Text>
-                        {el.loading &&
-                            <Loader size="sm" />
-                        }
                     </>}
             </Group>
         )
