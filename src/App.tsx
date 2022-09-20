@@ -10,6 +10,7 @@ import Uppercase from './Uppercase';
 import ClipboardSync from './ClipboardSync';
 
 const titleBarHeight = 41
+//window.navigator["windowControlsOverlay"].getTitlebarAreaRect().height
 
 const TitleBar = () =>
     <Header
