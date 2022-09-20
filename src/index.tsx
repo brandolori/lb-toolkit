@@ -1,10 +1,9 @@
 import { MantineProvider } from '@mantine/core';
 import { createRoot } from 'react-dom/client';
-import { lazy } from "react"
+import ClipboardStandalone from './ClipboardStandalone';
 import "./App.css"
+import App from './App';
 
-const ClipboardStandalone = lazy(() => import('./ClipboardStandalone'))
-const App = lazy(() => import('./App'))
 
 const theme = window.matchMedia("(prefers-color-scheme: dark)")
 

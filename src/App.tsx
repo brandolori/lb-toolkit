@@ -1,15 +1,13 @@
 import { AppShell, Container, Header, Text } from '@mantine/core';
-import { lazy, useEffect, useState } from 'react';
-import type { Route } from './Navigation';
-import Navigation from './Navigation';
-
-const Updater = lazy(() => import('./Updater'))
-const Cleaner = lazy(() => import('./Cleaner'))
-const Home = lazy(() => import('./Home'))
-const Regex = lazy(() => import('./Regex'))
-const Wifi = lazy(() => import('./Wifi'))
-const Uppercase = lazy(() => import('./Uppercase'))
-const ClipboardSync = lazy(() => import('./ClipboardSync'))
+import { useEffect, useState } from 'react';
+import Navigation, { Route } from './Navigation';
+import Updater from './Updater';
+import Cleaner from './Cleaner';
+import Home from './Home';
+import Regex from './Regex';
+import Wifi from './Wifi';
+import Uppercase from './Uppercase';
+import ClipboardSync from './ClipboardSync';
 
 const titleBarHeight = 41
 
