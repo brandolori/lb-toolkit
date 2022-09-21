@@ -19,6 +19,7 @@ export default () => {
     const [loading, setLoading] = useState(false)
     const [showSyncAlert, setSyncEnabled] = useState(false)
     const [dateFilter, setDateFilter] = useState<DateFilter>("today")
+    const [lastCopied, setLastCopied] = useState("")
 
     const updateClips = async () => {
         setLoading(true)
@@ -55,13 +56,23 @@ export default () => {
         </Group>
         {
             clips.map(el =>
-                <Card key={el.id} onClick={() => window["electronAPI"].clipboardPaste(el.text)}>
+                <Card
+                    style={{ cursor: "pointer" }}
+                    key={el.id} onClick={() => {
+                        window["electronAPI"].clipboardPaste(el.text)
+                        setLastCopied(el.id)
+                    }}>
                     <Text style={{ overflowWrap: "anywhere", userSelect: "text" }}>
                         {el.text}
                     </Text>
                     <Space h="md" />
                     <Group position="apart" align="end" >
+                        <Text color="dimmed" size="xs" weight="bold" >
+                            {new Date(el.date).toLocaleString("en-uk")}
+                        </Text>
                         <Group>
+
+                            <Text color="dimmed" size="xs" weight="bold">{lastCopied == el.id && <>COPIED</>}</Text>
                             <Text color="dimmed" size="xs" weight="bold">
                                 {el.source == "pc"
                                     ? "PC"
@@ -69,13 +80,7 @@ export default () => {
                                         ? "PHONE"
                                         : "UNKNOWN"}
                             </Text>
-                            <Text color="dimmed" size="xs" weight="bold" >
-                                {new Date(el.date).toLocaleString("en-uk")}
-                            </Text>
                         </Group>
-                        <Button size="xs" variant="light">
-                            Copy
-                        </Button>
                     </Group>
                 </Card>)
         }
