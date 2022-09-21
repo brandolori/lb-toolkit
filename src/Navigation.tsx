@@ -10,6 +10,7 @@ type RouteNavProps = {
 };
 
 const RouteNav = ({ currentRoute, routeName, onChangeRoute, label }: RouteNavProps) => <NavLink
+    style={{ cursor: "default" }}
     label={label}
     active={currentRoute == routeName}
     onClick={() => onChangeRoute(routeName)}

@@ -13,3 +13,7 @@ body {
 .header * {
     -webkit-app-region: none;
 }
+
+img {
+    -webkit-user-drag: none;
+}
