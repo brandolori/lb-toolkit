@@ -63,7 +63,8 @@ export default () => {
                         setLastCopied(el.id)
                     }}>
                     <Text style={{ overflowWrap: "anywhere", userSelect: "text" }}>
-                        {el.text}
+                        {el.text.substring(0, 200)}
+                        {el.text.length > 200 && "..."}
                     </Text>
                     <Space h="md" />
                     <Group position="apart" align="end" >
