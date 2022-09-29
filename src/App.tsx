@@ -1,6 +1,6 @@
 import { AppShell, Container, Header, Text } from '@mantine/core';
 import { useEffect, useState } from 'react';
-import Navigation, { Route } from './Navigation';
+import Navigation, { RouteObj } from './Navigation';
 import Updater from './Updater';
 import Cleaner from './Cleaner';
 import Home from './Home';
@@ -21,35 +21,61 @@ const TitleBar = () =>
         </Text>
     </Header>
 
+const routes: RouteObj[] = [
+    {
+        label: "🔧 Home",
+        name: "home",
+        component: Home
+    },
+    {
+        label: "📦 Updater",
+        name: "updater",
+        component: Updater
+    },
+    {
+        label: "🧹 Cleaner",
+        name: "cleaner",
+        component: Cleaner
+    },
+    {
+        label: "⚙️ Regex checker",
+        name: "regex",
+        component: Regex
+    },
+    {
+        label: "🕵️‍♂️ Wifi password",
+        name: "wifi",
+        component: Wifi
+    },
+    {
+        label: "✒️ Text Casing",
+        name: "uppercase",
+        component: Uppercase
+    },
+    {
+        label: "✂️ Clipboard",
+        name: "clipboard",
+        component: ClipboardSync
+    },
+]
+
 const App = () => {
-    const [route, setRoute] = useState<Route>("home")
+    const [route, setRoute] = useState(routes[0].name)
 
     useEffect(() => {
         window["electronAPI"].readyToShow()
     }, [])
 
+    const RouteComponent = routes.find(el => el.name == route).component
+
     return <AppShell
         padding="md"
         header={<TitleBar />}
-        navbar={<Navigation route={route} onChangeRoute={(route) => setRoute(route)} />}
+        navbar={<Navigation routes={routes} route={route} onChangeRoute={(route) => setRoute(route)} />}
     >
         <div style={{ position: "relative", height: "100%" }}>
             <Container style={{ position: "absolute", inset: 0, overflow: "auto" }} >
-
-                {route == "home" &&
-                    <Home />}
-                {route == "updater" &&
-                    <Updater />}
-                {route == "cleaner" &&
-                    <Cleaner />}
-                {route == "regex" &&
-                    <Regex />}
-                {route == "wifi" &&
-                    <Wifi />}
-                {route == "uppercase" &&
-                    <Uppercase />}
-                {route == "clipboard" &&
-                    <ClipboardSync />}
+                <RouteComponent />
             </Container>
         </div>
 

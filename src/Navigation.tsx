@@ -1,57 +1,39 @@
 import { Navbar, NavLink } from "@mantine/core";
 
-export type Route = "updater" | "home" | "cleaner" | "regex" | "wifi" | "uppercase" | "clipboard"
+export type RouteObj = {
+    name: string,
+    label: string,
+    component: any
+}
 
 type RouteNavProps = {
-    currentRoute: Route;
-    routeName: Route;
-    onChangeRoute: (route: Route) => void;
-    label: string;
+    active: boolean
+    onClick: () => void
+    label: string
 };
 
-const RouteNav = ({ currentRoute, routeName, onChangeRoute, label }: RouteNavProps) => <NavLink
+const RouteNav = ({ active, onClick, label }: RouteNavProps) => <NavLink
     style={{ cursor: "default" }}
     label={label}
-    active={currentRoute == routeName}
-    onClick={() => onChangeRoute(routeName)}
+    active={active}
+    onClick={onClick}
 />
 
-export default ({ route, onChangeRoute }:
-    { route: Route, onChangeRoute: (route: Route) => void }) =>
+type NavigationProps = {
+    route: string
+    routes: RouteObj[]
+    onChangeRoute: (route: string) => void
+}
+
+export default ({ route, routes, onChangeRoute }: NavigationProps) =>
     <Navbar width={{ base: 200 }} p="xs">
-        <RouteNav
-            currentRoute={route}
-            label="🔧 Home"
-            onChangeRoute={onChangeRoute}
-            routeName="home" />
-        <RouteNav
-            currentRoute={route}
-            label="📦 Updater"
-            onChangeRoute={onChangeRoute}
-            routeName="updater" />
-        <RouteNav
-            currentRoute={route}
-            label="🧹 Cleaner"
-            onChangeRoute={onChangeRoute}
-            routeName="cleaner" />
-        <RouteNav
-            currentRoute={route}
-            label="⚙️ Regex checker"
-            onChangeRoute={onChangeRoute}
-            routeName="regex" />
-        <RouteNav
-            currentRoute={route}
-            label="🕵️‍♂️ Wifi password"
-            onChangeRoute={onChangeRoute}
-            routeName="wifi" />
-        <RouteNav
-            currentRoute={route}
-            label="✒️ Text Casing"
-            onChangeRoute={onChangeRoute}
-            routeName="uppercase" />
-        <RouteNav
-            currentRoute={route}
-            label="✂️ Clipboard"
-            onChangeRoute={onChangeRoute}
-            routeName="clipboard" />
+        {
+            routes.map(el =>
+                <RouteNav
+                    active={route == el.name}
+                    label={el.label}
+                    onClick={() => onChangeRoute(el.name)}
+                />
+            )
+        }
     </Navbar>
