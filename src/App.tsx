@@ -33,23 +33,25 @@ const App = () => {
         header={<TitleBar />}
         navbar={<Navigation route={route} onChangeRoute={(route) => setRoute(route)} />}
     >
-        <Container style={{ height: "100%" }}>
+        <div style={{ position: "relative", height: "100%" }}>
+            <Container style={{ position: "absolute", inset: 0, overflow: "auto" }} >
 
-            {route == "home" &&
-                <Home />}
-            {route == "updater" &&
-                <Updater />}
-            {route == "cleaner" &&
-                <Cleaner />}
-            {route == "regex" &&
-                <Regex />}
-            {route == "wifi" &&
-                <Wifi />}
-            {route == "uppercase" &&
-                <Uppercase />}
-            {route == "clipboard" &&
-                <ClipboardSync />}
-        </Container>
+                {route == "home" &&
+                    <Home />}
+                {route == "updater" &&
+                    <Updater />}
+                {route == "cleaner" &&
+                    <Cleaner />}
+                {route == "regex" &&
+                    <Regex />}
+                {route == "wifi" &&
+                    <Wifi />}
+                {route == "uppercase" &&
+                    <Uppercase />}
+                {route == "clipboard" &&
+                    <ClipboardSync />}
+            </Container>
+        </div>
 
     </AppShell>
 }
