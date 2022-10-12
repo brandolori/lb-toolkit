@@ -12,6 +12,14 @@ const folders: { name: string, path: string }[] = [
         path: "C:\\AMD",
         name: "AMD installer data",
     },
+    {
+        path: "%temp%",
+        name: "Temp folder",
+    },
+    {
+        path: "shell:RecycleBinFolder",
+        name: "Recycle bin",
+    },
 ]
 
 export default () => {
@@ -46,6 +54,7 @@ export default () => {
 
     const showFolder = async (path: string) => {
         const substitutedPath = await substitutePath(path)
+        console.log(substitutedPath)
         window["electronAPI"].openFolder(substitutedPath)
     }
 

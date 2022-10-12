@@ -6,6 +6,7 @@ const { getHypervisor, setHypervisor } = require("./hypervisor")
 const { getSettingValue, setSettingValue } = require("./settings")
 const { handleCommand, dirSize } = require("./utils")
 const fp = require('fs').promises
+var sudo = require('sudo-prompt')
 
 module.exports = () => {
     let state = true
@@ -44,25 +45,44 @@ module.exports = () => {
 
 
     ipcMain.handle('fs:calculateFolderSize', async (ev, path) => {
-        try {
-            return dirSize(path) / 1_000_000
-        } catch (e) {
-            console.log(e)
-            return 0
-        }
+        console.log("point a")
+        return new Promise((res, rej) => {
+            console.log("point b")
+            sudo.exec(`powershell -noprofile -command "(ls ${path} -r | measure -sum Length).Sum"`,
+                {
+                    name: "lbtoolkit"
+                }, (error, stdout) => {
+                    console.log("point c")
+                    if (error)
+                        rej(error.message)
+
+                    const number = (Number.parseInt(stdout.toString()) / 1_000_000)
+                    res(Number.isNaN(number) ? 0 : number)
+                })
+            console.log("point d")
+        })
     })
+
 
     ipcMain.handle('fs:getEnvironmentVariable', async (ev, variable) => {
         return process.env[variable]
     })
 
 
-    ipcMain.handle('fs:deleteFolder', async (ev, folderPath) => {
-        const content = await fp.readdir(folderPath)
-        const promises = content.map(async file => {
-            await fp.rm(path.join(folderPath, file), { recursive: true })
+    ipcMain.handle('fs:deleteFolder', async (ev, path) => {
+
+        return new Promise((res, rej) => {
+
+            sudo.exec(`powershell -noprofile -command "Get-ChildItem ${path} | Remove-Item –recurse -Force"`,
+                {
+                    name: "lbtoolkit"
+                },
+                (error) => {
+                    if (error)
+                        rej(error.message)
+                    res()
+                })
         })
-        await Promise.all(promises)
     })
 
     ipcMain.on("fs:openFolder", (ev, path) => {

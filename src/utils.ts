@@ -2,7 +2,7 @@ const substitutePath = async (path: string) => {
 
     let mutatedPath = path
 
-    const envRegex = /%[A-Z]+%/g
+    const envRegex = /%[A-Za-z]+%/g
     const envPromises = path.match(envRegex)?.map(async (subString) => {
         const envVarName = subString.replaceAll("%", "")
         const envVarValue = await window["electronAPI"].getEnvironmentVariable(envVarName)
