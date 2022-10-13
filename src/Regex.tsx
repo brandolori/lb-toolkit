@@ -29,7 +29,7 @@ export default () => {
             return ""
         })
 
-        let outputArray: OutputData[] = []
+        const outputArray: OutputData[] = []
         let index = 0
         data.forEach(el => {
             outputArray.push({
