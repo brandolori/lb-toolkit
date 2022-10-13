@@ -1,7 +1,8 @@
-const { app } = require('electron');
-const fs = require('fs');
-const path = require("path");
-const { EventEmitter } = require('stream');
+"use strict"
+const { app } = require('electron')
+const fs = require('fs')
+const path = require("path")
+const { EventEmitter } = require('stream')
 const SettingsItems = require("../src/SettingsItems")
 
 const DefaultValues = {

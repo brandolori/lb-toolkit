@@ -1,4 +1,4 @@
-import { Navbar, NavLink } from "@mantine/core";
+import { Navbar, NavLink } from "@mantine/core"
 
 export type RouteObj = {
     name: string,
@@ -10,7 +10,7 @@ type RouteNavProps = {
     active: boolean
     onClick: () => void
     label: string
-};
+}
 
 const RouteNav = ({ active, onClick, label }: RouteNavProps) => <NavLink
     style={{ cursor: "default" }}

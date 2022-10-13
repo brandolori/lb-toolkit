@@ -1,3 +1,4 @@
+"use strict"
 const { app } = require("electron")
 
 const atLoginFlag = "--login"

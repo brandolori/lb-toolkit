@@ -1,11 +1,10 @@
+"use strict"
 const { ipcMain, app, shell } = require("electron")
-const path = require("path")
 const getWifiPassword = require("./getWifiPassword")
 const getWifiSSID = require("./getWifiSSID")
 const { getHypervisor, setHypervisor } = require("./hypervisor")
 const { getSettingValue, setSettingValue } = require("./settings")
 const { handleCommand, dirSize } = require("./utils")
-const fp = require('fs').promises
 var sudo = require('sudo-prompt')
 
 module.exports = () => {

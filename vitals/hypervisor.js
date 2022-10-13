@@ -1,5 +1,5 @@
-var sudo = require('sudo-prompt');
-
+"use strict"
+var sudo = require('sudo-prompt')
 const onString = "Auto"
 const offString = "Off"
 
@@ -19,7 +19,7 @@ const setHypervisor = (enabled) => {
                 else
                     rej(error)
             }
-        );
+        )
     })
 }
 /**
@@ -32,13 +32,13 @@ const getHypervisor = () => {
             { name: "lb toolkit" },
             (error, stdout) => {
                 if (!error) {
-                    let ret = /^\s*hypervisorlaunchtype\s* (.+)\s*$/gm.exec(stdout.toString());
+                    let ret = /^\s*hypervisorlaunchtype\s* (.+)\s*$/gm.exec(stdout.toString())
                     res(ret[1] == onString ? true : false)
                 }
                 else
                     rej(error)
             }
-        );
+        )
     })
 }
 

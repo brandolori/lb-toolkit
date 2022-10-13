@@ -61,7 +61,7 @@ export default () => {
             <img
                 style={{ borderRadius: 4 }}
                 width={200} height={200} src={qr} alt="" />
-                <Image></Image>
+            <Image></Image>
         </div>
         <Space h="md" />
         <Group>

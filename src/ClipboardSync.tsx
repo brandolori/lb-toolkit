@@ -1,7 +1,7 @@
-import { ActionIcon, Alert, Button, Card, Group, NativeSelect, Space, Stack, Text } from "@mantine/core";
-import { useEffect, useState } from "react";
-import { AiOutlineReload, AiOutlineWarning } from "react-icons/ai";
-import SettingsItems from "./SettingsItems";
+import { ActionIcon, Alert, Button, Card, Group, NativeSelect, Space, Stack, Text } from "@mantine/core"
+import { useEffect, useState } from "react"
+import { AiOutlineReload, AiOutlineWarning } from "react-icons/ai"
+import SettingsItems from "./SettingsItems"
 
 type DateFilter = "today" | "this week" | "this month" | "all"
 

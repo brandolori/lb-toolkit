@@ -1,4 +1,5 @@
-import { createWindowsInstaller } from 'electron-winstaller';
+"use strict"
+import { createWindowsInstaller } from 'electron-winstaller'
 
 try {
     await createWindowsInstaller({
@@ -9,8 +10,8 @@ try {
         setupIcon: "assets/favicon.ico",
         iconUrl: "https://www.lorenzobartolini.me/favicon.ico",
         noDelta: true,
-    });
-    console.log('It worked!');
+    })
+    console.log('It worked!')
 } catch (e) {
-    console.log(`No dice: ${e.message}`);
+    console.log(`No dice: ${e.message}`)
 }

@@ -1,13 +1,13 @@
-import { AppShell, Container, Header, Text } from '@mantine/core';
-import { useEffect, useState } from 'react';
-import Navigation, { RouteObj } from './Navigation';
-import Updater from './Updater';
-import Cleaner from './Cleaner';
-import Home from './Home';
-import Regex from './Regex';
-import Wifi from './Wifi';
-import Uppercase from './Uppercase';
-import ClipboardSync from './ClipboardSync';
+import { AppShell, Container, Header, Text } from '@mantine/core'
+import { useEffect, useState } from 'react'
+import Navigation, { RouteObj } from './Navigation'
+import Updater from './Updater'
+import Cleaner from './Cleaner'
+import Home from './Home'
+import Regex from './Regex'
+import Wifi from './Wifi'
+import Uppercase from './Uppercase'
+import ClipboardSync from './ClipboardSync'
 
 const titleBarHeight = 41
 
@@ -82,4 +82,4 @@ const App = () => {
     </AppShell>
 }
 
-export default App;
+export default App

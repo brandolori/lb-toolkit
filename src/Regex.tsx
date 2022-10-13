@@ -22,7 +22,7 @@ export default () => {
 
         let data = []
 
-        var numGroups = (new RegExp(regex + '|')).exec('').length - 1;
+        var numGroups = (new RegExp(regex + '|')).exec('').length - 1
 
         inputString.replace(regExpObject, (substr, a, b) => {
             data.push({ length: substr.length, start: numGroups > 0 ? b : a, text: substr })

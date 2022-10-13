@@ -1,8 +1,9 @@
-const { AzureSASCredential, TableClient, odata } = require("@azure/data-tables");
-const { getSettingValue } = require("./settings");
-const clipboardListener = require('clipboard-event');
-const SettingsItems = require("../src/SettingsItems");
-const { ipcMain } = require("electron");
+"use strict"
+const { AzureSASCredential, TableClient, odata } = require("@azure/data-tables")
+const { getSettingValue } = require("./settings")
+const clipboardListener = require('clipboard-event')
+const SettingsItems = require("../src/SettingsItems")
+const { ipcMain } = require("electron")
 
 const getTableClient = () => {
     const account = getSettingValue(SettingsItems.azureStorageAccount)
@@ -12,7 +13,7 @@ const getTableClient = () => {
         `https://${account}.table.core.windows.net`,
         tableName,
         new AzureSASCredential(SASToken)
-    );
+    )
 
 }
 

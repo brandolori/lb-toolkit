@@ -1,5 +1,4 @@
 "use strict"
-
 const { app } = require('electron');
 const { isSquirrel } = require('./squirrel');
 // Module to create native browser window.

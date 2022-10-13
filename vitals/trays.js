@@ -1,3 +1,4 @@
+"use strict"
 const { Tray, Menu, app } = require("electron")
 const { join } = require("path")
 const robot = require("robotjs")

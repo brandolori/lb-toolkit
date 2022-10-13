@@ -1,6 +1,6 @@
-import { Space, Stack, Title, Text } from "@mantine/core";
-import { useEffect, useState } from "react";
-import AppSettings from "./AppSettings";
+import { Space, Stack, Title, Text } from "@mantine/core"
+import { useEffect, useState } from "react"
+import AppSettings from "./AppSettings"
 import SystemSettings from "./SystemSettings"
 
 export default () => {
@@ -25,5 +25,5 @@ export default () => {
         </Stack>
         <Text size="sm" align="right">v{appVersion}</Text>
 
-    </Stack>;
+    </Stack>
 }

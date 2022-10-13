@@ -1,12 +1,13 @@
-const { join } = require('path');
-const robot = require("robotjs");
-const { getSettingValue, settingsChangeEmitter } = require("./settings");
-const { globalShortcut, clipboard, BrowserWindow, app, ipcMain, nativeTheme, screen } = require("electron");
-const { getTableClient, startClipboardListener, stopClipboardListener } = require("./clipboard");
-const { isLogin, registerAtLogin, unregisterAtLogin } = require("./login");
-const initMessageHandlers = require('./initMessageHandlers');
-const { createMediaTrays, destroyMediaTrays, createMainTray } = require('./trays');
-const SettingsItems = require('../src/SettingsItems');
+"use strict"
+const { join } = require('path')
+const robot = require("robotjs")
+const { getSettingValue, settingsChangeEmitter } = require("./settings")
+const { globalShortcut, clipboard, BrowserWindow, app, ipcMain, nativeTheme, screen } = require("electron")
+const { getTableClient, startClipboardListener, stopClipboardListener } = require("./clipboard")
+const { isLogin, registerAtLogin, unregisterAtLogin } = require("./login")
+const initMessageHandlers = require('./initMessageHandlers')
+const { createMediaTrays, destroyMediaTrays, createMainTray } = require('./trays')
+const SettingsItems = require('../src/SettingsItems')
 
 let ignoreSingleCopy = false
 
@@ -32,7 +33,7 @@ const startListeningToClipboard = () => {
                 mainWindow?.webContents.send('clipboard:change')
             }
         }
-    });
+    })
 
 }
 
@@ -97,7 +98,7 @@ const createClipboardWindow = () => {
             devTools: !app.isPackaged,
             webSecurity: false
         }
-    });
+    })
 
     windowsByWebcontentsId[clipboardWindow.webContents.id] = clipboardWindow
 
@@ -106,7 +107,7 @@ const createClipboardWindow = () => {
     const baseUrl = app.isPackaged
         ? `file://${join(__dirname, '../build/index.html')}`
         : 'http://localhost:3000'
-    clipboardWindow.loadURL(`${baseUrl}?page=clipboard`);
+    clipboardWindow.loadURL(`${baseUrl}?page=clipboard`)
 
     clipboardWindow.on("blur", () => {
         clipboardWindow.close()
@@ -157,11 +158,11 @@ const createMainWindow = () => {
     // and load the index.html of the app.
     mainWindow.loadURL(app.isPackaged
         ? `file://${join(__dirname, '../build/index.html')}`
-        : 'http://localhost:3000');
+        : 'http://localhost:3000')
 
     // Open the DevTools.
     if (!app.isPackaged)
-        mainWindow.webContents.openDevTools();
+        mainWindow.webContents.openDevTools()
 
     mainWindow.on('close', () => {
         delete windowsByWebcontentsId[mainWindow.webContents.id]

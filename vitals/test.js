@@ -1,3 +1,4 @@
+"use strict"
 const { getHypervisor, setHypervisor } = require("./hypervisor")
 
 setHypervisor(true)
