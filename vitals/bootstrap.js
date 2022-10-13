@@ -5,7 +5,7 @@ const { getSettingValue, settingsChangeEmitter } = require("./settings")
 const { globalShortcut, clipboard, BrowserWindow, app, ipcMain, nativeTheme, screen } = require("electron")
 const { getTableClient, startClipboardListener, stopClipboardListener } = require("./clipboard")
 const { isLogin, registerAtLogin, unregisterAtLogin } = require("./login")
-const initMessageHandlers = require('./initMessageHandlers')
+const initMessageHandlers = require('./messageHandlers')
 const { createMediaTrays, destroyMediaTrays, createMainTray } = require('./trays')
 const SettingsItems = require('../src/SettingsItems')
 

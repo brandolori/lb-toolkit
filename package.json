@@ -53,6 +53,7 @@
   "dependencies": {
     "@azure/data-tables": "^13.2.0",
     "clipboard-event": "^1.6.0",
+    "empty-trash": "^4.0.0",
     "robotjs": "^0.6.0",
     "sudo-prompt": "^9.2.1"
   }
