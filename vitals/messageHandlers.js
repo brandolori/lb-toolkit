@@ -6,7 +6,6 @@ const { getHypervisor, setHypervisor } = require("./hypervisor")
 const { getSettingValue, setSettingValue } = require("./settings")
 const { handleCommand } = require("./utils")
 const sudo = require('sudo-prompt')
-const { default: emptyTrash } = require('empty-trash')
 
 module.exports = () => {
     ipcMain.handle('cmd:fetchUpdates', async () => {
@@ -44,21 +43,16 @@ module.exports = () => {
 
 
     ipcMain.handle('fs:calculateFolderSize', async (ev, path) => {
-        console.log("point a")
         return new Promise((res, rej) => {
-            console.log("point b")
             sudo.exec(`powershell -noprofile -command "(ls ${path} -r | measure -sum Length).Sum"`,
-                {
-                    name: "lbtoolkit"
-                }, (error, stdout) => {
-                    console.log("point c")
+                { name: "lbtoolkit" },
+                (error, stdout) => {
                     if (error)
                         rej(error.message)
 
                     const number = (Number.parseInt(stdout.toString()) / 1_000_000)
                     res(Number.isNaN(number) ? 0 : number)
                 })
-            console.log("point d")
         })
     })
 
@@ -70,15 +64,13 @@ module.exports = () => {
 
         // special case for the recycle bin: it's not a real folder
         if (path == "shell:RecycleBinFolder") {
+            const { default: emptyTrash } = await import('empty-trash')
             return emptyTrash()
         }
 
         return new Promise((res, rej) => {
-
             sudo.exec(`powershell -noprofile -command "Get-ChildItem ${path} | Remove-Item –recurse -Force"`,
-                {
-                    name: "lbtoolkit"
-                },
+                { name: "lbtoolkit" },
                 (error) => {
                     if (error)
                         rej(error.message)
@@ -87,7 +79,13 @@ module.exports = () => {
         })
     })
 
-    ipcMain.on("fs:openFolder", (ev, path) => {
+    ipcMain.on("fs:openFolder", async (ev, path) => {
+
+        // special case for the recycle bin: it's not a real folder
+        if (path == "shell:RecycleBinFolder") {
+            await handleCommand("explorer", ["shell:RecycleBinFolder"])
+        }
+
         shell.showItemInFolder(path)
     })
 
@@ -97,7 +95,6 @@ module.exports = () => {
 
         return { ssid, password }
     })
-
 
     ipcMain.handle('display:currentRefreshRate', async () => {
         const stdout = await handleCommand(`${__dirname}\\bin\\refreshtool\\refreshtool.exe`, ["current"])

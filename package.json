@@ -1,6 +1,6 @@
 {
   "name": "lb-toolkit",
-  "version": "0.17.8",
+  "version": "0.17.9",
   "private": true,
   "homepage": "./",
   "main": "vitals/main.js",
