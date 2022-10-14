@@ -16,7 +16,8 @@
     "elect-package": "electron-packager . --overwrite --ignore=\\installer --ignore=\\public --icon=assets\\favicon.ico",
     "elect-publish": "node ./vitals/generate-installer.mjs",
     "elect-rebuild": "npm rebuild --runtime=electron --target=19.0.0-alpha.1 --dist-url=https://electronjs.org/headers --abi=93",
-    "build": "npm run react-build && npm run elect-package && npm run elect-publish"
+    "build": "npm run react-build && npm run elect-package && npm run elect-publish",
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
